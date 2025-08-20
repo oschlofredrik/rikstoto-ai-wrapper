@@ -23,7 +23,10 @@ import {
   AccordionSummary,
   AccordionDetails,
   Badge,
-  Grid
+  Grid,
+  Menu,
+  MenuItem,
+  Divider
 } from '@mui/material';
 import {
   ExpandMore,
@@ -34,7 +37,12 @@ import {
   Error,
   Timer,
   Speed,
-  Memory
+  Memory,
+  Save,
+  FolderOpen,
+  Download,
+  Upload,
+  Delete
 } from '@mui/icons-material';
 import Editor from '@monaco-editor/react';
 import ReactMarkdown from 'react-markdown';
@@ -220,10 +228,22 @@ function ParallelApp() {
   const [activeTab, setActiveTab] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
   const [sessionId, setSessionId] = useState<string>('');
+  const [savedConfigs, setSavedConfigs] = useState<string[]>([]);
+  const [configMenuAnchor, setConfigMenuAnchor] = useState<null | HTMLElement>(null);
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const [configName, setConfigName] = useState('');
 
   useEffect(() => {
     fetchModelsAndDefaults();
+    loadSavedConfigsList();
   }, []);
+
+  const loadSavedConfigsList = () => {
+    const saved = localStorage.getItem('rikstoto_saved_configs');
+    if (saved) {
+      setSavedConfigs(JSON.parse(saved));
+    }
+  };
 
   const fetchModelsAndDefaults = async () => {
     try {
@@ -235,20 +255,29 @@ function ParallelApp() {
       setModels(modelsRes.data);
       setModelDefaults(defaultsRes.data.defaults);
       
-      // Initialize model configs with defaults
-      const configs: { [key: string]: ModelConfig } = {};
-      modelsRes.data.forEach((model: Model) => {
-        const defaults = defaultsRes.data.defaults[model.name] || {};
-        configs[model.name] = {
-          name: model.name,
-          enabled: true,
-          system_prompt: defaults.system_prompt || '',
-          temperature: defaults.temperature || 0.7,
-          max_length: defaults.max_length || 500,
-          top_p: defaults.top_p || 0.9
-        };
-      });
-      setModelConfigs(configs);
+      // Check for last used config in localStorage
+      const lastConfig = localStorage.getItem('rikstoto_last_config');
+      
+      if (lastConfig) {
+        // Load saved config
+        const saved = JSON.parse(lastConfig);
+        setModelConfigs(saved);
+      } else {
+        // Initialize model configs with defaults
+        const configs: { [key: string]: ModelConfig } = {};
+        modelsRes.data.forEach((model: Model) => {
+          const defaults = defaultsRes.data.defaults[model.name] || {};
+          configs[model.name] = {
+            name: model.name,
+            enabled: true,
+            system_prompt: defaults.system_prompt || '',
+            temperature: defaults.temperature || 0.7,
+            max_length: defaults.max_length || 500,
+            top_p: defaults.top_p || 0.9
+          };
+        });
+        setModelConfigs(configs);
+      }
     } catch (err) {
       setError('Failed to fetch models and defaults');
     }
@@ -310,13 +339,16 @@ function ParallelApp() {
   };
 
   const handleConfigChange = (modelName: string, field: keyof ModelConfig, value: any) => {
-    setModelConfigs(prev => ({
-      ...prev,
+    const newConfigs = {
+      ...modelConfigs,
       [modelName]: {
-        ...prev[modelName],
+        ...modelConfigs[modelName],
         [field]: value
       }
-    }));
+    };
+    setModelConfigs(newConfigs);
+    // Auto-save to localStorage
+    localStorage.setItem('rikstoto_last_config', JSON.stringify(newConfigs));
   };
 
   const resetToDefaults = (modelName: string) => {
@@ -334,6 +366,69 @@ function ParallelApp() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  const saveConfiguration = (name: string) => {
+    const configToSave = {
+      name: name,
+      date: new Date().toISOString(),
+      configs: modelConfigs
+    };
+    
+    // Save named configuration
+    localStorage.setItem(`rikstoto_config_${name}`, JSON.stringify(configToSave));
+    
+    // Update list of saved configs
+    const updatedList = [...savedConfigs, name].filter((v, i, a) => a.indexOf(v) === i);
+    localStorage.setItem('rikstoto_saved_configs', JSON.stringify(updatedList));
+    setSavedConfigs(updatedList);
+    
+    // Also update last config
+    localStorage.setItem('rikstoto_last_config', JSON.stringify(modelConfigs));
+  };
+
+  const loadConfiguration = (name: string) => {
+    const saved = localStorage.getItem(`rikstoto_config_${name}`);
+    if (saved) {
+      const config = JSON.parse(saved);
+      setModelConfigs(config.configs);
+      localStorage.setItem('rikstoto_last_config', JSON.stringify(config.configs));
+    }
+  };
+
+  const deleteConfiguration = (name: string) => {
+    localStorage.removeItem(`rikstoto_config_${name}`);
+    const updatedList = savedConfigs.filter(c => c !== name);
+    localStorage.setItem('rikstoto_saved_configs', JSON.stringify(updatedList));
+    setSavedConfigs(updatedList);
+  };
+
+  const exportConfiguration = () => {
+    const dataStr = JSON.stringify(modelConfigs, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const exportFileDefaultName = `rikstoto-config-${new Date().toISOString().split('T')[0]}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  const importConfiguration = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const config = JSON.parse(e.target?.result as string);
+          setModelConfigs(config);
+          localStorage.setItem('rikstoto_last_config', JSON.stringify(config));
+        } catch (error) {
+          setError('Failed to import configuration');
+        }
+      };
+      reader.readAsText(file);
+    }
   };
 
   const enabledCount = Object.values(modelConfigs).filter(c => c.enabled).length;
@@ -421,9 +516,84 @@ function ParallelApp() {
         {/* Middle Panel: Model Configuration */}
         <Grid size={{ xs: 12, md: 4 }}>
           <Paper sx={{ p: 3, height: '100%', overflow: 'auto' }}>
-            <Typography variant="h6" gutterBottom>
-              Model Configuration
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6">
+                Model Configuration
+              </Typography>
+              <Box>
+                <Tooltip title="Save/Load Configurations">
+                  <IconButton
+                    onClick={(e) => setConfigMenuAnchor(e.currentTarget)}
+                    color="primary"
+                  >
+                    <Settings />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </Box>
+
+            <Menu
+              anchorEl={configMenuAnchor}
+              open={Boolean(configMenuAnchor)}
+              onClose={() => setConfigMenuAnchor(null)}
+            >
+              <MenuItem onClick={() => {
+                const name = prompt('Enter configuration name:');
+                if (name) {
+                  saveConfiguration(name);
+                  setConfigMenuAnchor(null);
+                }
+              }}>
+                <Save sx={{ mr: 1 }} /> Save Current Config
+              </MenuItem>
+              <Divider />
+              {savedConfigs.length > 0 && (
+                <>
+                  <MenuItem disabled>
+                    <Typography variant="caption">Saved Configurations</Typography>
+                  </MenuItem>
+                  {savedConfigs.map(config => (
+                    <MenuItem key={config} onClick={() => {
+                      loadConfiguration(config);
+                      setConfigMenuAnchor(null);
+                    }}>
+                      <FolderOpen sx={{ mr: 1 }} /> {config}
+                      <IconButton
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (confirm(`Delete configuration "${config}"?`)) {
+                            deleteConfiguration(config);
+                          }
+                        }}
+                        sx={{ ml: 'auto' }}
+                      >
+                        <Delete fontSize="small" />
+                      </IconButton>
+                    </MenuItem>
+                  ))}
+                  <Divider />
+                </>
+              )}
+              <MenuItem onClick={() => {
+                exportConfiguration();
+                setConfigMenuAnchor(null);
+              }}>
+                <Download sx={{ mr: 1 }} /> Export to File
+              </MenuItem>
+              <MenuItem component="label">
+                <Upload sx={{ mr: 1 }} /> Import from File
+                <input
+                  type="file"
+                  hidden
+                  accept=".json"
+                  onChange={(e) => {
+                    importConfiguration(e);
+                    setConfigMenuAnchor(null);
+                  }}
+                />
+              </MenuItem>
+            </Menu>
             
             {models.map((model, index) => (
               <Accordion key={model.name} defaultExpanded={index === 0}>
