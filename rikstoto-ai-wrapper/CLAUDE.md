@@ -1,7 +1,7 @@
 # Rikstoto AI Wrapper - Project Context
 
 ## Project Overview
-This is an AI model testing platform for Norsk Rikstoto to evaluate different Hugging Face text generation models. The platform allows testing various AI models with JSON data input and customizable system prompts.
+This is an AI model testing platform for Norsk Rikstoto to evaluate different Hugging Face text generation models. The platform allows testing various AI models with enriched V75 race data JSON input and customizable system prompts.
 
 ## Technical Stack
 - **Backend**: FastAPI (Python) with Hugging Face Inference API
@@ -70,6 +70,25 @@ Docker configuration is available for production deployment with docker-compose.
 - Add response caching
 - Support for different model types (not just text generation)
 - Integration with Rikstoto's infrastructure
+
+## V75 Data Structure
+The application now uses an enriched JSON structure for V75 race data with:
+- Complete race results with all horses (1-12) and their finishing positions
+- `marked: "true/false"` to indicate user's betting selections
+- Detailed horse information including:
+  - Name, driver, trainer
+  - Odds, morning line odds, odds movement
+  - Betting data (percentage bet, amount bet)
+  - Form, recent results with times
+  - Win/place percentages, earnings
+  - Age, gender, equipment details
+- Pool information and payout details
+- Support for tracking which horses finished outside top 4 positions
+
+## Deployment
+- **GitHub Repository**: https://github.com/oschlofredrik/rikstoto-ai-wrapper
+- **Render Integration**: Auto-deploys on push to main branch
+- **Environment**: Requires HUGGINGFACE_TOKEN in environment variables
 
 ## Troubleshooting
 
