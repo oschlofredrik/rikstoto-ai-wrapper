@@ -538,7 +538,7 @@ function ParallelApp() {
               onClose={() => setConfigMenuAnchor(null)}
             >
               <MenuItem onClick={() => {
-                const name = prompt('Enter configuration name:');
+                const name = window.prompt('Enter configuration name:');
                 if (name) {
                   saveConfiguration(name);
                   setConfigMenuAnchor(null);
@@ -562,7 +562,7 @@ function ParallelApp() {
                         size="small"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (confirm(`Delete configuration "${config}"?`)) {
+                          if (window.confirm(`Delete configuration "${config}"?`)) {
                             deleteConfiguration(config);
                           }
                         }}
