@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: rikstoto-ai-wrapper
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: HUGGINGFACE_TOKEN
+        sync: false
+      - key: PORT
+        value: 8000
