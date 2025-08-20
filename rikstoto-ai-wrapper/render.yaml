@@ -1,0 +1,49 @@
+services:
+  # Combined Backend + Frontend Service
+  - type: web
+    name: rikstoto-ai
+    env: python
+    buildCommand: |
+      # Build frontend first
+      cd frontend && npm install && npm run build && cd .. &&
+      # Then install backend dependencies
+      pip install -r backend/requirements.txt
+    startCommand: "cd backend && python -m uvicorn main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: NODE_VERSION
+        value: 18
+      # Azure OpenAI
+      - key: AZURE_OPENAI_API_KEY
+        sync: false
+      - key: AZURE_OPENAI_ENDPOINT
+        sync: false
+      - key: AZURE_OPENAI_API_VERSION
+        value: 2024-08-01-preview
+      - key: AZURE_OPENAI_GPT4O_DEPLOYMENT
+        value: gpt-4o
+      - key: AZURE_OPENAI_GPT4O_MINI_DEPLOYMENT
+        value: gpt-4o-mini
+      - key: AZURE_OPENAI_O3_MINI_DEPLOYMENT
+        value: o3-mini
+      # Mistral
+      - key: AZURE_MISTRAL_ENDPOINT
+        sync: false
+      - key: AZURE_MISTRAL_API_KEY
+        sync: false
+      # Claude
+      - key: AZURE_DATABRICKS_CLAUDE_ENDPOINT
+        sync: false
+      - key: AZURE_DATABRICKS_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      # Gemini
+      - key: AZURE_APIM_GEMINI_ENDPOINT
+        sync: false
+      - key: AZURE_APIM_GEMINI_KEY
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
