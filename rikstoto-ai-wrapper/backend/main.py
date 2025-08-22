@@ -108,8 +108,8 @@ MODEL_DEFAULTS = {
         "system_prompt": "Utfør en logisk analyse av følgende bongdata med fokus på sannsynligheter og forventet verdi:\n{{json}}\n\nBruk reasoning til å vurdere: 1) Sjanse for gevinst, 2) Expected value, 3) Risikovurdering",
         "temperature": 0.3,  # Low for STEM/reasoning tasks (o3-mini specialty)
         "max_length": 800,  # Increased for detailed reasoning chains
-        "top_p": 0.95,  # Slightly constrained for focused reasoning
-        "reasoning_effort": "medium"  # o3-mini specific: low/medium/high
+        "top_p": 0.95  # Slightly constrained for focused reasoning
+        # "reasoning_effort": "medium"  # Will be enabled when Azure supports it (API version 2025-04-01-preview)
     },
     "mistral-large": {
         "system_prompt": "Analyser veddeløpsdata strukturert:\n{{json}}\n\nPresentér: • Spilltype og struktur\n• Hestevalg med begrunnelse\n• Økonomisk analyse\n• Anbefaling",
@@ -205,8 +205,10 @@ def call_azure_openai(model_name: str, prompt: str, params: Dict[str, Any]) -> A
         }
         
         # Add o3-mini specific parameters
-        if model_name == "o3-mini" and "reasoning_effort" in params:
-            api_params["reasoning_effort"] = params.get("reasoning_effort", "medium")
+        # Note: reasoning_effort not supported in current Azure deployment
+        # Will be added when API version 2025-04-01-preview is available
+        # if model_name == "o3-mini" and "reasoning_effort" in params:
+        #     api_params["reasoning_effort"] = params.get("reasoning_effort", "medium")
         
         response = client.chat.completions.create(**api_params)
         
@@ -774,9 +776,10 @@ def generate_for_model(model_config: ModelConfig, json_str: str, session_id: Opt
             "top_k": model_config.top_k or 50
         }
         
-        # Add o3-mini specific reasoning_effort parameter
-        if model_config.name == "o3-mini" and "reasoning_effort" in defaults:
-            params["reasoning_effort"] = defaults.get("reasoning_effort", "medium")
+        # Add o3-mini specific reasoning_effort parameter when supported
+        # Note: Commented out until Azure supports it (needs API version 2025-04-01-preview)
+        # if model_config.name == "o3-mini" and "reasoning_effort" in defaults:
+        #     params["reasoning_effort"] = defaults.get("reasoning_effort", "medium")
         
         # Route to appropriate API
         if model_config.name in ["gpt-4o", "gpt-4o-mini", "o3-mini"]:
