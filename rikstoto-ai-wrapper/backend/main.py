@@ -882,6 +882,33 @@ async def generate_all(request: ParallelGenerationRequest) -> Dict[str, Any]:
         "failed": sum(1 for r in results if not r["success"])
     }
 
+@app.get("/debug/env")
+async def debug_env() -> Dict[str, Any]:
+    """Debug endpoint to check environment variables.
+    
+    Returns:
+        Dictionary with sanitized environment variable information
+    """
+    api_key = os.getenv("AZURE_OPENAI_API_KEY", "")
+    endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "")
+    api_version = os.getenv("AZURE_OPENAI_API_VERSION", "")
+    
+    return {
+        "azure_openai": {
+            "api_key_set": bool(api_key),
+            "api_key_length": len(api_key),
+            "api_key_preview": f"{api_key[:10]}...{api_key[-4:]}" if api_key else "NOT SET",
+            "endpoint": endpoint,
+            "api_version": api_version,
+            "deployment_gpt4o": os.getenv("AZURE_OPENAI_GPT4O_DEPLOYMENT", "NOT SET"),
+            "deployment_gpt4o_mini": os.getenv("AZURE_OPENAI_GPT4O_MINI_DEPLOYMENT", "NOT SET"),
+            "deployment_o3_mini": os.getenv("AZURE_OPENAI_O3_MINI_DEPLOYMENT", "NOT SET")
+        },
+        "environment": os.getenv("ENVIRONMENT", "NOT SET"),
+        "render_service": os.getenv("RENDER_SERVICE_NAME", "NOT ON RENDER"),
+        "is_render": os.getenv("RENDER", "false") == "true"
+    }
+
 @app.get("/health")
 async def health_check() -> Dict[str, Any]:
     """Health check endpoint for monitoring.
