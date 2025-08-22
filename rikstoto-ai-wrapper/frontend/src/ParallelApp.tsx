@@ -26,10 +26,15 @@ import {
   Grid,
   Menu,
   MenuItem,
-  Divider
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
 import {
   ExpandMore,
+  ExpandLess,
   PlayArrow,
   Settings,
   ContentCopy,
@@ -42,7 +47,10 @@ import {
   FolderOpen,
   Download,
   Upload,
-  Delete
+  Delete,
+  Code,
+  Visibility,
+  VisibilityOff
 } from '@mui/icons-material';
 import Editor from '@monaco-editor/react';
 import ReactMarkdown from 'react-markdown';
@@ -232,6 +240,7 @@ function ParallelApp() {
   const [configMenuAnchor, setConfigMenuAnchor] = useState<null | HTMLElement>(null);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [configName, setConfigName] = useState('');
+  const [jsonModalOpen, setJsonModalOpen] = useState(false);
 
   useEffect(() => {
     fetchModelsAndDefaults();
@@ -443,28 +452,22 @@ function ParallelApp() {
       </Typography>
 
       <Grid container spacing={3} sx={{ mt: 2 }}>
-        {/* Left Panel: JSON Input and Controls */}
+        {/* Left Panel: Controls and Status */}
         <Grid size={{ xs: 12, md: 4 }}>
-          <Paper sx={{ p: 3, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
-              Input Data
-            </Typography>
-            
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                JSON Data (Bong Information)
+          <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6">
+                Control Panel
               </Typography>
-              <Editor
-                height="300px"
-                defaultLanguage="json"
-                value={jsonInput}
-                onChange={(value) => setJsonInput(value || '')}
-                theme="vs-dark"
-                options={{
-                  minimap: { enabled: false },
-                  fontSize: 12
-                }}
-              />
+              <Tooltip title="Edit JSON Data">
+                <IconButton
+                  color="primary"
+                  onClick={() => setJsonModalOpen(true)}
+                  size="small"
+                >
+                  <Code />
+                </IconButton>
+              </Tooltip>
             </Box>
 
             <Button
@@ -475,9 +478,9 @@ function ParallelApp() {
               onClick={handleGenerateAll}
               disabled={loading || enabledCount === 0}
               startIcon={loading ? <CircularProgress size={20} /> : <PlayArrow />}
-              sx={{ mb: 2 }}
+              sx={{ mb: 3, py: 1.5 }}
             >
-              {loading ? 'Generating...' : `Generate with ${enabledCount} Models`}
+              {loading ? 'Generating...' : `Test ${enabledCount} Models`}
             </Button>
 
             {error && (
@@ -631,12 +634,13 @@ function ParallelApp() {
                     <TextField
                       fullWidth
                       multiline
-                      rows={3}
-                      label="System Prompt"
+                      rows={8}
+                      label="System Prompt (use {{json}} to insert data)"
                       value={modelConfigs[model.name]?.system_prompt || ''}
                       onChange={(e) => handleConfigChange(model.name, 'system_prompt', e.target.value)}
                       sx={{ mb: 2 }}
-                      size="small"
+                      variant="outlined"
+                      helperText="Write your prompt here. Use {{json}} where you want the V75 data inserted."
                     />
                     
                     <Typography variant="body2" gutterBottom>
@@ -755,6 +759,48 @@ function ParallelApp() {
           </Paper>
         </Grid>
       </Grid>
+
+      {/* JSON Data Modal */}
+      <Dialog
+        open={jsonModalOpen}
+        onClose={() => setJsonModalOpen(false)}
+        maxWidth="lg"
+        fullWidth
+      >
+        <DialogTitle>
+          Edit V75 JSON Data
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ mt: 1 }}>
+            <Editor
+              height="500px"
+              defaultLanguage="json"
+              value={jsonInput}
+              onChange={(value) => setJsonInput(value || '')}
+              theme="vs-dark"
+              options={{
+                minimap: { enabled: false },
+                fontSize: 13,
+                formatOnPaste: true,
+                formatOnType: true,
+                automaticLayout: true
+              }}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setJsonModalOpen(false)}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={() => setJsonModalOpen(false)}
+            variant="contained"
+            color="primary"
+          >
+            Save & Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

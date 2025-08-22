@@ -897,7 +897,8 @@ async def debug_env() -> Dict[str, Any]:
         "azure_openai": {
             "api_key_set": bool(api_key),
             "api_key_length": len(api_key),
-            "api_key_preview": f"{api_key[:10]}...{api_key[-4:]}" if api_key else "NOT SET",
+            "api_key_preview": f"{api_key[:20]}...{api_key[-10:]}" if api_key else "NOT SET",
+            "api_key_full_masked": "*" * len(api_key) if api_key else "NOT SET",
             "endpoint": endpoint,
             "api_version": api_version,
             "deployment_gpt4o": os.getenv("AZURE_OPENAI_GPT4O_DEPLOYMENT", "NOT SET"),
