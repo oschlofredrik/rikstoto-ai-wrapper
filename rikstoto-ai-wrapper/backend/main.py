@@ -214,7 +214,15 @@ def call_azure_openai(model_name: str, prompt: str, params: Dict[str, Any]) -> A
         
         return response.choices[0].message.content
     except Exception as e:
-        return {"error": f"Azure OpenAI error: {str(e)}", "loading": False}
+        error_msg = str(e)
+        # Sanitize error message to avoid exposing sensitive data
+        if "401" in error_msg or "authentication" in error_msg.lower():
+            return {"error": "Azure OpenAI authentication failed. Please check configuration.", "loading": False}
+        elif "404" in error_msg:
+            return {"error": "Azure OpenAI deployment not found.", "loading": False}
+        else:
+            # Only return generic error message in production
+            return {"error": "Azure OpenAI request failed.", "loading": False}
 
 def call_mistral_azure(prompt: str, params: Dict[str, Any]) -> Any:
     """Call Mistral Large via Azure AI Model-as-a-Service.
@@ -259,7 +267,8 @@ def call_mistral_azure(prompt: str, params: Dict[str, Any]) -> Any:
         
         return result["choices"][0]["message"]["content"]
     except Exception as e:
-        return {"error": f"Mistral error: {str(e)}", "loading": False}
+        # Sanitize error message
+        return {"error": "Mistral API request failed.", "loading": False}
 
 def call_claude_databricks(prompt: str, params: Dict[str, Any]) -> Any:
     """Call Claude 3.5 Sonnet via Azure Databricks.
@@ -313,7 +322,8 @@ def call_claude_databricks(prompt: str, params: Dict[str, Any]) -> Any:
         
         return result["content"][0]["text"]
     except Exception as e:
-        return {"error": f"Claude error: {str(e)}", "loading": False}
+        # Sanitize error message
+        return {"error": "Claude API request failed.", "loading": False}
 
 def call_gemini_azure(prompt: str, params: Dict[str, Any]) -> Any:
     """Call Gemini 1.5 Flash via Azure API Management.
@@ -371,7 +381,8 @@ def call_gemini_azure(prompt: str, params: Dict[str, Any]) -> Any:
         
         return result["candidates"][0]["content"]["parts"][0]["text"]
     except Exception as e:
-        return {"error": f"Gemini error: {str(e)}", "loading": False}
+        # Sanitize error message
+        return {"error": "Gemini API request failed.", "loading": False}
 
 def call_huggingface_api(model_name: str, prompt: str, params: Dict[str, Any]) -> Any:
     """Call Hugging Face Inference API to generate text.
@@ -885,34 +896,6 @@ async def generate_all(request: ParallelGenerationRequest) -> Dict[str, Any]:
         "failed": sum(1 for r in results if not r["success"])
     }
 
-@app.get("/debug/env")
-async def debug_env() -> Dict[str, Any]:
-    """Debug endpoint to check environment variables.
-    
-    Returns:
-        Dictionary with sanitized environment variable information
-    """
-    api_key = os.getenv("AZURE_OPENAI_API_KEY", "")
-    endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "")
-    api_version = os.getenv("AZURE_OPENAI_API_VERSION", "")
-    
-    return {
-        "azure_openai": {
-            "api_key_set": bool(api_key),
-            "api_key_length": len(api_key),
-            "api_key_preview": f"{api_key[:20]}...{api_key[-10:]}" if api_key else "NOT SET",
-            "api_key_full_masked": "*" * len(api_key) if api_key else "NOT SET",
-            "endpoint": endpoint,
-            "api_version": api_version,
-            "deployment_gpt4o": os.getenv("AZURE_OPENAI_GPT4O_DEPLOYMENT", "NOT SET"),
-            "deployment_gpt4o_mini": os.getenv("AZURE_OPENAI_GPT4O_MINI_DEPLOYMENT", "NOT SET"),
-            "deployment_o3_mini": os.getenv("AZURE_OPENAI_O3_MINI_DEPLOYMENT", "NOT SET")
-        },
-        "environment": os.getenv("ENVIRONMENT", "NOT SET"),
-        "render_service": os.getenv("RENDER_SERVICE_NAME", "NOT ON RENDER"),
-        "is_render": os.getenv("RENDER", "false") == "true"
-    }
-
 @app.get("/health")
 async def health_check() -> Dict[str, Any]:
     """Health check endpoint for monitoring.
@@ -982,7 +965,7 @@ async def test_models():
                 "status_code": None
             })
     
-    return {"models_tested": results, "token_used": api_token[:10] + "..."}
+    return {"models_tested": results, "token_configured": bool(api_token)}
 
 # Serve React frontend if build exists
 frontend_build_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "build")
