@@ -3,14 +3,24 @@
   "track": "Bjerke",
   "date": "2025-07-02",
   "startTime": "18:45",
+  "stalltipsInfo": {
+    "type": "Stalltips",
+    "generatedBy": "Rikstoto Algorithm",
+    "strategy": "Favoritt-mix med outsidere",
+    "confidence": "Høy",
+    "description": "Algoritmisk generert kupong med balansert mix av favoritter og outsidere"
+  },
   "betDetails": {
-    "betId": "V75-2025-0702-BJ-847392",
+    "betId": "STALL-2025-0702-BJ-847392",
+    "betType": "Stalltips",
     "systemPlay": true,
     "rows": 192,
     "costPerRow": 1,
     "totalCost": 192,
     "currency": "NOK",
-    "timestamp": "2025-07-02T16:30:00Z"
+    "timestamp": "2025-07-02T16:30:00Z",
+    "stalltipsLevel": "Standard",
+    "reductions": 2
   },
   "poolInfo": {
     "totalPool": 8900000,
@@ -43,6 +53,17 @@
     "7": [6, 8]
   },
   "bankers": [2],
+  "stalltipsRecommendations": {
+    "primaryBanker": {"race": 2, "horse": 2, "name": "Looking Superb", "reason": "Sterk favoritt med 48.5% av innsatsene"},
+    "secondaryBankers": [
+      {"race": 5, "horse": 5, "name": "Disco Volante", "reason": "44.3% av innsatsene, god form"},
+      {"race": 3, "horse": 3, "name": "Wilda", "reason": "42.1% av innsatsene, vinnersjanser"}
+    ],
+    "outsiders": [
+      {"race": 7, "horse": 10, "name": "Clodrique", "odds": 11.5, "reason": "Verdi-outsider med potensial"},
+      {"race": 1, "horse": 5, "name": "Victory Lane", "odds": 7.8, "reason": "God odds for plassering"}
+    ]
+  },
   "mostBetHorses": [
     {"race": 1, "horse": 6, "name": "Tangen Haap", "percentage": 35.2, "driver": "Vidar Hop"},
     {"race": 2, "horse": 2, "name": "Looking Superb", "percentage": 48.5, "driver": "Ulf Ohlsson"},
@@ -64,6 +85,13 @@
         "favorite": {"horse": 6, "percentage": 35.2},
         "secondChoice": {"horse": 1, "percentage": 18.5},
         "thirdChoice": {"horse": 5, "percentage": 15.3}
+      },
+      "stalltipsSelection": {
+        "strategy": "Balansert",
+        "selectedHorses": [1, 5, 6, 8],
+        "mainChoice": 6,
+        "coverage": "33%",
+        "riskLevel": "Medium"
       },
       "results": [
         {
@@ -248,6 +276,14 @@
         "favorite": {"horse": 2, "percentage": 48.5},
         "secondChoice": {"horse": 7, "percentage": 22.3},
         "thirdChoice": {"horse": 3, "percentage": 8.5}
+      },
+      "stalltipsSelection": {
+        "strategy": "Banker",
+        "selectedHorses": [2],
+        "mainChoice": 2,
+        "coverage": "10%",
+        "riskLevel": "Low",
+        "bankerReason": "Klar favoritt med 48.5% av innsatsene"
       },
       "results": [
         {
@@ -1189,5 +1225,22 @@
     "bankerHit": true,
     "totalBettors": 45892,
     "averageBetSize": 194
+  },
+  "stalltipsPerformance": {
+    "algorithmVersion": "3.2.1",
+    "successRate": "68%",
+    "averageReturn": "142%",
+    "recommendationAccuracy": {
+      "bankers": "85%",
+      "favorites": "72%",
+      "outsiders": "31%"
+    },
+    "historicalPerformance": {
+      "last30Days": {
+        "totalStalltips": 120,
+        "profitable": 82,
+        "averageROI": "118%"
+      }
+    }
   }
 }
