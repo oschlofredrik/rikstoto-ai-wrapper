@@ -97,139 +97,221 @@ function ParallelApp() {
   const [models, setModels] = useState<Model[]>([]);
   const [modelDefaults, setModelDefaults] = useState<ModelDefaults>({});
   const [modelConfigs, setModelConfigs] = useState<{ [key: string]: ModelConfig }>({});
-  const [jsonInput, setJsonInput] = useState(`{
-  "product": "V75",
-  "track": "Bjerke",
-  "date": "2025-07-02",
-  "startTime": "18:45",
-  "betDetails": {
-    "betId": "V75-2025-0702-BJ-847392",
-    "systemPlay": true,
-    "rows": 192,
-    "costPerRow": 1,
-    "totalCost": 192,
-    "currency": "NOK",
-    "timestamp": "2025-07-02T16:30:00Z"
-  },
-  "markings": {
-    "1": [1, 5, 6, 8],
-    "2": [2],
-    "3": [3, 5],
-    "4": [1, 2, 3],
-    "5": [1, 5],
-    "6": [1, 8],
-    "7": [6, 8]
-  },
-  "bankers": [2],
-  "raceResults": [
-    {
-      "race": 1,
-      "name": "Løp 1",
-      "distance": 2100,
-      "startMethod": "A",
-      "totalStarters": 12,
-      "results": [
-        {
-          "horse": 6,
-          "position": 1,
-          "marked": "true",
-          "name": "Tangen Haap",
-          "driver": "Vidar Hop",
-          "trainer": "Erlend Rennesvik",
-          "odds": 3.1,
-          "morningLineOdds": 4.0,
-          "oddsMovement": "shortening",
-          "percentageBet": 18.5,
-          "amountBet": 185000,
-          "form": "2-1-1-3-2",
-          "winPercentage": 28,
-          "placePercentage": 65,
-          "earnings": 980000,
-          "age": 5,
-          "gender": "H"
+  const [jsonInput, setJsonInput] = useState(JSON.stringify({
+    "product": "V75",
+    "track": "Bjerke",
+    "date": "2025-07-02",
+    "startTime": "18:45",
+    "betDetails": {
+      "betId": "V75-2025-0702-BJ-847392",
+      "systemPlay": true,
+      "rows": 192,
+      "costPerRow": 1,
+      "totalCost": 192,
+      "currency": "NOK",
+      "timestamp": "2025-07-02T16:30:00Z"
+    },
+    "poolInfo": {
+      "totalPool": 8900000,
+      "currentPool": 8900000,
+      "bettingStatus": "settled",
+      "lastUpdated": "2025-07-02T18:30:00Z",
+      "jackpot": 3500000,
+      "distribution": {
+        "7correct": {
+          "winners": 1,
+          "payoutPerRow": 1234000
         },
-        {
-          "horse": 1,
-          "position": 2,
-          "marked": "true",
-          "name": "Flash Forward",
-          "odds": 5.2
+        "6correct": {
+          "winners": 456,
+          "payoutPerRow": 1437
         },
-        {
-          "horse": 5,
-          "position": 3,
-          "marked": "true",
-          "name": "Victory Lane",
-          "odds": 7.8
-        },
-        {
-          "horse": 8,
-          "position": 4,
-          "marked": "true",
-          "name": "Thunder Strike",
-          "odds": 4.5
-        },
-        {
-          "horse": 2,
-          "position": 5,
-          "marked": "false"
-        },
-        {
-          "horse": 3,
-          "position": 6,
-          "marked": "false"
-        },
-        {
-          "horse": 4,
-          "position": 7,
-          "marked": "false"
-        },
-        {
-          "horse": 7,
-          "position": 8,
-          "marked": "false"
-        },
-        {
-          "horse": 9,
-          "position": 9,
-          "marked": "false"
-        },
-        {
-          "horse": 10,
-          "position": 10,
-          "marked": "false"
-        },
-        {
-          "horse": 11,
-          "position": 11,
-          "marked": "false"
-        },
-        {
-          "horse": 12,
-          "position": 12,
-          "marked": "false"
+        "5correct": {
+          "winners": 12478,
+          "payoutPerRow": 123
         }
-      ],
-      "winner": 6,
-      "winnerName": "Tangen Haap",
-      "winnerOdds": 3.1,
-      "hit": true
+      }
+    },
+    "markings": {
+      "1": [1, 5, 6, 8],
+      "2": [2],
+      "3": [3, 5],
+      "4": [1, 2, 3],
+      "5": [1, 5],
+      "6": [1, 8],
+      "7": [6, 8]
+    },
+    "bankers": [2],
+    "mostBetHorses": [
+      {"race": 1, "horse": 6, "name": "Tangen Haap", "percentage": 35.2, "driver": "Vidar Hop"},
+      {"race": 2, "horse": 2, "name": "Looking Superb", "percentage": 48.5, "driver": "Ulf Ohlsson"},
+      {"race": 3, "horse": 3, "name": "Wilda", "percentage": 42.1, "driver": "Magnus Teien Gundersen"},
+      {"race": 4, "horse": 2, "name": "Sweetlikecandybar", "percentage": 38.7, "driver": "Bjørn Goop"},
+      {"race": 5, "horse": 5, "name": "Disco Volante", "percentage": 44.3, "driver": "Adrian Solberg Akselsen"},
+      {"race": 6, "horse": 1, "name": "Bolt Brodde", "percentage": 41.8, "driver": "Erik Adielsson"},
+      {"race": 7, "horse": 10, "name": "Clodrique", "percentage": 28.5, "driver": "Gunnar Austevoll"}
+    ],
+    "raceResults": [
+      {
+        "race": 1,
+        "name": "V75-1",
+        "distance": 2100,
+        "startMethod": "A",
+        "totalStarters": 12,
+        "poolSize": 1271428,
+        "bettingDistribution": {
+          "favorite": {"horse": 6, "percentage": 35.2},
+          "secondChoice": {"horse": 1, "percentage": 18.5},
+          "thirdChoice": {"horse": 5, "percentage": 15.3}
+        },
+        "results": [
+          {
+            "horse": 6,
+            "position": 1,
+            "marked": "true",
+            "name": "Tangen Haap",
+            "driver": "Vidar Hop",
+            "trainer": "Erlend Rennesvik",
+            "odds": 3.1,
+            "morningLineOdds": 4.0,
+            "oddsMovement": "shortening",
+            "percentageBet": 35.2,
+            "amountBet": 447542,
+            "publicRanking": 1,
+            "form": "2-1-1-3-2",
+            "winPercentage": 28,
+            "placePercentage": 65,
+            "earnings": 980000,
+            "age": 5,
+            "gender": "H"
+          },
+          {
+            "horse": 1,
+            "position": 2,
+            "marked": "true",
+            "name": "Flash Forward",
+            "driver": "Tom Erik Solberg",
+            "percentageBet": 18.5,
+            "amountBet": 235215,
+            "publicRanking": 2,
+            "odds": 5.2
+          },
+          {
+            "horse": 5,
+            "position": 3,
+            "marked": "true",
+            "name": "Victory Lane",
+            "driver": "Adrian Solberg Akselsen",
+            "percentageBet": 15.3,
+            "amountBet": 194528,
+            "publicRanking": 3,
+            "odds": 7.8
+          },
+          {
+            "horse": 8,
+            "position": 4,
+            "marked": "true",
+            "name": "Thunder Strike",
+            "driver": "Eirik Høitomt",
+            "percentageBet": 12.8,
+            "amountBet": 162742,
+            "publicRanking": 4,
+            "odds": 4.5
+          },
+          {
+            "horse": 2,
+            "position": 5,
+            "marked": "false",
+            "percentageBet": 4.2,
+            "amountBet": 53400,
+            "publicRanking": 6
+          },
+          {
+            "horse": 3,
+            "position": 6,
+            "marked": "false",
+            "percentageBet": 2.8,
+            "amountBet": 35600,
+            "publicRanking": 7
+          },
+          {
+            "horse": 4,
+            "position": 7,
+            "marked": "false",
+            "percentageBet": 1.5,
+            "amountBet": 19071,
+            "publicRanking": 9
+          },
+          {
+            "horse": 7,
+            "position": 8,
+            "marked": "false",
+            "percentageBet": 0.8,
+            "amountBet": 10171,
+            "publicRanking": 10
+          },
+          {
+            "horse": 9,
+            "position": 9,
+            "marked": "false",
+            "percentageBet": 0.4,
+            "amountBet": 5085,
+            "publicRanking": 11
+          },
+          {
+            "horse": 10,
+            "position": 10,
+            "marked": "false",
+            "percentageBet": 7.5,
+            "amountBet": 95357,
+            "publicRanking": 5
+          },
+          {
+            "horse": 11,
+            "position": 11,
+            "marked": "false",
+            "percentageBet": 0.2,
+            "amountBet": 2542,
+            "publicRanking": 12
+          },
+          {
+            "horse": 12,
+            "position": 12,
+            "marked": "false",
+            "percentageBet": 0.1,
+            "amountBet": 1271,
+            "publicRanking": 13
+          }
+        ],
+        "winner": 6,
+        "winnerName": "Tangen Haap",
+        "winnerOdds": 3.1,
+        "hit": true
+      }
+    ],
+    "result": {
+      "status": "settled",
+      "correctRaces": 6,
+      "totalRaces": 7,
+      "prizeLevel": "6 av 7 rette",
+      "winningRows": 8
+    },
+    "payout": {
+      "totalWon": 11497,
+      "perRow": 1437.13,
+      "returnOnInvestment": 5986,
+      "currency": "NOK"
+    },
+    "statistics": {
+      "coveragePercentage": 0.78,
+      "averageWinnerOdds": 4.27,
+      "favoriteWins": 3,
+      "outsiderWins": 1,
+      "bankerHit": true,
+      "totalBettors": 45892,
+      "averageBetSize": 194
     }
-  ],
-  "result": {
-    "status": "settled",
-    "correctRaces": 6,
-    "totalRaces": 7,
-    "prizeLevel": "6 av 7 rette",
-    "winningRows": 8
-  },
-  "payout": {
-    "totalWon": 11497,
-    "perRow": 1437.13,
-    "returnOnInvestment": 5986,
-    "currency": "NOK"
-  }
-}`);
+  }, null, 2));
   const [results, setResults] = useState<ModelResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
