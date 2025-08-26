@@ -6,5 +6,6 @@ export { default as PrizeCalculator } from './PrizeCalculator';
 export { default as DetailedResults } from './DetailedResults';
 export { default as SubscriptionCTA } from './SubscriptionCTA';
 export { default as AppDownloadCTA } from './AppDownloadCTA';
+export { default as ControlPanel } from './ControlPanel';
 
 export type { RaceResult } from './DetailedResults';

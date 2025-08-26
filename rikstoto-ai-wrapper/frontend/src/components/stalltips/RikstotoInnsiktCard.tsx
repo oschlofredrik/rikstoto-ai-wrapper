@@ -92,10 +92,10 @@ En godt balansert bong, men med en outsider som Slave to Queen Cal ville utbetal
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'space-between',
-          py: 1.5,
+          py: 1.75,
           px: 2,
-          bgcolor: '#F5F5F5',
-          borderRadius: '8px',
+          bgcolor: '#F8F8F8',
+          borderRadius: '10px',
           cursor: 'pointer',
           transition: 'all 0.3s ease',
           '&:hover': {
@@ -115,8 +115,9 @@ En godt balansert bong, men med en outsider som Slave to Queen Cal ville utbetal
             sx={{ 
               bgcolor: '#6B3EFF', 
               color: 'white',
-              height: '20px',
-              fontSize: '11px',
+              height: '22px',
+              fontSize: '12px',
+              fontWeight: 600,
               '& .MuiChip-icon': {
                 color: 'white',
                 ml: 0.5

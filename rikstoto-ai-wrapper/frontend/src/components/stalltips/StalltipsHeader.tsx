@@ -21,19 +21,20 @@ export default function StalltipsHeader({
       bgcolor: '#FFFFFF',
       borderBottom: '1px solid rgba(0,0,0,0.05)'
     }}>
-      {/* V75 Stalltips Logo */}
+      {/* V75 Stalltips Logo - Exact Figma styling */}
       <Typography 
-        variant="h5" 
+        component="div"
         sx={{ 
           color: '#6B3EFF', 
-          fontWeight: 'bold',
-          fontSize: '20px',
+          fontWeight: 700,
+          fontSize: '22px',
           fontStyle: 'italic',
-          letterSpacing: '-0.5px',
-          mb: 0.5
+          letterSpacing: '-0.02em',
+          mb: 0.25,
+          fontFamily: '"SF Pro Display", -apple-system, sans-serif'
         }}
       >
-        V75 <span style={{ fontWeight: 900 }}>Stalltips</span>
+        V75 <span style={{ fontWeight: 900, fontStyle: 'normal' }}>Stalltips</span>
       </Typography>
       
       {/* Location and time */}

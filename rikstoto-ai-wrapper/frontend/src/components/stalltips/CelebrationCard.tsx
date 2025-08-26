@@ -28,14 +28,14 @@ export default function CelebrationCard({
   return (
     <Box
       sx={{
-        mx: 1,
+        mx: 2,
         mb: 2,
-        p: 3,
+        p: 4,
         bgcolor: '#FFF155', // Yellow from Figma
-        borderRadius: '8px',
+        borderRadius: '12px',
         position: 'relative',
         overflow: 'hidden',
-        minHeight: '264px', // Height from Figma
+        height: '280px', // Exact height from Figma
         animation: showAnimation ? 'celebrationPulse 0.5s ease-out' : 'none',
         '@keyframes celebrationPulse': {
           '0%': { transform: 'scale(0.95)', opacity: 0 },
@@ -91,9 +91,9 @@ export default function CelebrationCard({
         <Typography 
           variant="body1" 
           sx={{ 
-            color: '#333', 
-            fontSize: '14px',
-            fontWeight: 500,
+            color: '#1A1A1A', 
+            fontSize: '16px',
+            fontWeight: 600,
             animation: showAnimation ? 'fadeInDown 0.6s ease-out' : 'none',
             '@keyframes fadeInDown': {
               '0%': { opacity: 0, transform: 'translateY(-20px)' },
@@ -109,10 +109,11 @@ export default function CelebrationCard({
           variant="h2" 
           sx={{ 
             color: '#6B3EFF', // Exact purple from Figma
-            fontWeight: 'bold',
-            fontSize: '48px',
-            textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
-            letterSpacing: '-1px',
+            fontWeight: 800,
+            fontSize: '52px',
+            textShadow: '0 2px 8px rgba(107, 62, 255, 0.15)',
+            letterSpacing: '-0.03em',
+            lineHeight: 1,
             animation: showAnimation ? 'fadeInUp 0.8s ease-out' : 'none',
             '@keyframes fadeInUp': {
               '0%': { opacity: 0, transform: 'translateY(20px)' },

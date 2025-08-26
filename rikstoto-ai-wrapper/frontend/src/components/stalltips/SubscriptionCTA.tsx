@@ -46,16 +46,19 @@ export default function SubscriptionCTA({
           sx={{ 
             bgcolor: '#6B3EFF',
             color: 'white',
-            py: 1.5,
-            px: 2,
+            height: '48px',
+            px: 3,
             borderRadius: '24px',
-            fontWeight: 'bold',
-            fontSize: '14px',
+            fontWeight: 600,
+            fontSize: '15px',
             textTransform: 'none',
-            boxShadow: '0 4px 12px rgba(123, 63, 242, 0.3)',
+            boxShadow: '0 2px 8px rgba(107, 62, 255, 0.25)',
             '&:hover': {
               bgcolor: '#5A2FD0',
-              boxShadow: '0 6px 16px rgba(123, 63, 242, 0.4)'
+              boxShadow: '0 4px 12px rgba(107, 62, 255, 0.35)'
+            },
+            '& .MuiButton-startIcon': {
+              mr: 0.75
             }
           }}
         >
@@ -69,17 +72,22 @@ export default function SubscriptionCTA({
           startIcon={<Replay />}
           onClick={onRepeatPurchase}
           sx={{ 
-            py: 1.5,
-            px: 2,
+            height: '48px',
+            px: 3,
             borderRadius: '24px',
-            borderColor: '#E0E0E0',
+            borderColor: '#DDD',
+            borderWidth: '1.5px',
             color: '#333',
             fontWeight: 500,
-            fontSize: '14px',
+            fontSize: '15px',
             textTransform: 'none',
             '&:hover': {
               borderColor: '#6B3EFF',
-              bgcolor: 'rgba(123, 63, 242, 0.04)'
+              borderWidth: '1.5px',
+              bgcolor: 'rgba(107, 62, 255, 0.04)'
+            },
+            '& .MuiButton-startIcon': {
+              mr: 0.75
             }
           }}
         >
