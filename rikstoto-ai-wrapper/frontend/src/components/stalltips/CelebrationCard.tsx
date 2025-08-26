@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Stack } from '@mui/material';
 import confettiBg from '../../assets/images/confetti-group.png';
-import celebrationBg from '../../assets/images/celebration-card-bg.png';
 import horseGraphic from '../../assets/images/horse-graphic.svg';
 
 interface CelebrationCardProps {
@@ -37,9 +36,6 @@ export default function CelebrationCard({
         position: 'relative',
         overflow: 'hidden',
         minHeight: '264px', // Height from Figma
-        backgroundImage: `url(${celebrationBg})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
         animation: showAnimation ? 'celebrationPulse 0.5s ease-out' : 'none',
         '@keyframes celebrationPulse': {
           '0%': { transform: 'scale(0.95)', opacity: 0 },
@@ -72,14 +68,14 @@ export default function CelebrationCard({
       {/* Horse Graphic from Figma */}
       <Box sx={{
         position: 'absolute',
-        left: '-100px',
-        bottom: '-60px',
-        width: '300px',
-        height: '300px',
+        left: '-20px',
+        bottom: '-30px',
+        width: '200px',
+        height: '200px',
         backgroundImage: `url(${horseGraphic})`,
         backgroundSize: 'contain',
         backgroundRepeat: 'no-repeat',
-        opacity: 0.15,
+        opacity: 0.8,
         transform: 'rotate(-5deg)',
         animation: showAnimation ? 'horseJump 2s ease-out' : 'none',
         '@keyframes horseJump': {
