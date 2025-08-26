@@ -25,7 +25,7 @@ export default function StalltipsHeader({
       <Typography 
         variant="h5" 
         sx={{ 
-          color: '#7B3FF2', 
+          color: '#6B3EFF', 
           fontWeight: 'bold',
           fontSize: '20px',
           fontStyle: 'italic',

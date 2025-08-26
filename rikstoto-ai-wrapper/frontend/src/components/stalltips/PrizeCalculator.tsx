@@ -112,7 +112,7 @@ export default function PrizeCalculator({ prizes }: PrizeCalculatorProps) {
             <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
               Total gevinst:
             </Typography>
-            <Typography variant="h6" sx={{ color: '#7B3FF2', fontWeight: 'bold' }}>
+            <Typography variant="h6" sx={{ color: '#6B3EFF', fontWeight: 'bold' }}>
               {(
                 actualPrizes.sevenCorrect.amount * actualPrizes.sevenCorrect.count +
                 actualPrizes.sixCorrect.amount * actualPrizes.sixCorrect.count +
@@ -127,11 +127,11 @@ export default function PrizeCalculator({ prizes }: PrizeCalculatorProps) {
             fullWidth
             startIcon={<Calculate />}
             sx={{
-              bgcolor: '#7B3FF2',
+              bgcolor: '#6B3EFF',
               borderRadius: '16px',
               py: 1,
               '&:hover': {
-                bgcolor: '#6A2FE0'
+                bgcolor: '#5A2FD0'
               }
             }}
           >

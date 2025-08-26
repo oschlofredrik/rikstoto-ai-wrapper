@@ -104,7 +104,7 @@ En godt balansert bong, men med en outsider som Slave to Queen Cal ville utbetal
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Casino sx={{ fontSize: 20, color: '#7B3FF2' }} />
+          <Casino sx={{ fontSize: 20, color: '#6B3EFF' }} />
           <Typography variant="body1" sx={{ fontWeight: 500 }}>
             Rikstoto Innsikt
           </Typography>
@@ -113,7 +113,7 @@ En godt balansert bong, men med en outsider som Slave to Queen Cal ville utbetal
             size="small" 
             icon={<AutoAwesome sx={{ fontSize: 12 }} />}
             sx={{ 
-              bgcolor: '#7B3FF2', 
+              bgcolor: '#6B3EFF', 
               color: 'white',
               height: '20px',
               fontSize: '11px',
@@ -135,13 +135,13 @@ En godt balansert bong, men med en outsider som Slave to Queen Cal ville utbetal
           p: 2, 
           bgcolor: '#FAFAFA', 
           borderRadius: '0 0 8px 8px',
-          borderLeft: '3px solid #7B3FF2',
+          borderLeft: '3px solid #6B3EFF',
           ml: 0.5,
           mr: 0.5
         }}>
           {loading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
-              <CircularProgress size={30} sx={{ color: '#7B3FF2' }} />
+              <CircularProgress size={30} sx={{ color: '#6B3EFF' }} />
             </Box>
           ) : (
             <>
@@ -168,7 +168,7 @@ En godt balansert bong, men med en outsider som Slave to Queen Cal ville utbetal
                 alignItems: 'center',
                 gap: 1
               }}>
-                <AutoAwesome sx={{ fontSize: 14, color: '#7B3FF2' }} />
+                <AutoAwesome sx={{ fontSize: 14, color: '#6B3EFF' }} />
                 <Typography variant="caption" sx={{ color: '#999' }}>
                   Analyse generert av Rikstoto AI
                 </Typography>

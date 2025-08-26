@@ -116,7 +116,7 @@ export default function DetailedResults({ results }: DetailedResultsProps) {
                 variant="body2" 
                 sx={{ 
                   fontWeight: 'bold',
-                  bgcolor: result.isWinner ? '#7B3FF2' : '#999',
+                  bgcolor: result.isWinner ? '#6B3EFF' : '#999',
                   color: 'white',
                   px: 1,
                   py: 0.25,
