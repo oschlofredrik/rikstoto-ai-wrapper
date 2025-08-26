@@ -103,8 +103,10 @@ export default function MobileResultsView() {
       }
       
       // Update AI race data
-      const newRaceData = generateRaceDataForAI(betResult, raceResults);
-      newRaceData.generatedJson = data; // Include full generated data
+      const newRaceData = {
+        ...generateRaceDataForAI(betResult, raceResults),
+        generatedJson: data // Include full generated data
+      };
       setRaceDataForAI(newRaceData);
       
       // Force AI component to re-analyze
