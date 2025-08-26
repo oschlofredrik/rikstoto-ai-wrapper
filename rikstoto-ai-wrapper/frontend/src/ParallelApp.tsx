@@ -50,7 +50,8 @@ import {
   Delete,
   Code,
   Visibility,
-  VisibilityOff
+  VisibilityOff,
+  RestartAlt
 } from '@mui/icons-material';
 import Editor from '@monaco-editor/react';
 import ReactMarkdown from 'react-markdown';
@@ -330,24 +331,37 @@ function ParallelApp() {
               <Typography variant="h6">
                 Control Panel
               </Typography>
-              <Tooltip title="Generate Random JSON">
-                <IconButton
-                  color="secondary"
-                  onClick={() => setGeneratorOpen(true)}
-                  size="small"
-                >
-                  <Speed />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Edit JSON Data">
-                <IconButton
-                  color="primary"
-                  onClick={() => setJsonModalOpen(true)}
-                  size="small"
-                >
-                  <Code />
-                </IconButton>
-              </Tooltip>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Tooltip title="Reset to Default JSON">
+                  <IconButton
+                    color="default"
+                    onClick={() => {
+                      setJsonInput(JSON.stringify(testDataJson, null, 2));
+                    }}
+                    size="small"
+                  >
+                    <RestartAlt />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Generate Random JSON">
+                  <IconButton
+                    color="secondary"
+                    onClick={() => setGeneratorOpen(true)}
+                    size="small"
+                  >
+                    <Speed />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Edit JSON Data">
+                  <IconButton
+                    color="primary"
+                    onClick={() => setJsonModalOpen(true)}
+                    size="small"
+                  >
+                    <Code />
+                  </IconButton>
+                </Tooltip>
+              </Box>
             </Box>
 
             <Button
@@ -669,6 +683,15 @@ function ParallelApp() {
           </Box>
         </DialogContent>
         <DialogActions>
+          <Button 
+            onClick={() => {
+              setJsonInput(JSON.stringify(testDataJson, null, 2));
+            }}
+            startIcon={<RestartAlt />}
+          >
+            Reset to Default
+          </Button>
+          <Box sx={{ flex: 1 }} />
           <Button onClick={() => setJsonModalOpen(false)}>
             Cancel
           </Button>
