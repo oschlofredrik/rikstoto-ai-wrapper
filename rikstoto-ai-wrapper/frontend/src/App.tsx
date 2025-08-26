@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import ParallelApp from './ParallelApp';
 import UserInterface from './UserInterface';
+import MobileResultsView from './MobileResultsView';
 import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { Dashboard, Person } from '@mui/icons-material';
+import { Dashboard, Person, PhoneIphone } from '@mui/icons-material';
 
 function App() {
-  const [view, setView] = useState<'user' | 'admin'>('user');
+  const [view, setView] = useState<'mobile' | 'user' | 'admin'>('mobile');
 
   return (
     <Box>
@@ -26,6 +27,10 @@ function App() {
             onChange={(_, newView) => newView && setView(newView)}
             size="small"
           >
+            <ToggleButton value="mobile">
+              <PhoneIphone sx={{ mr: 1 }} />
+              Mobile
+            </ToggleButton>
             <ToggleButton value="user">
               <Person sx={{ mr: 1 }} />
               User
@@ -38,7 +43,7 @@ function App() {
         </Box>
       )}
       
-      {view === 'user' ? <UserInterface /> : <ParallelApp />}
+      {view === 'mobile' ? <MobileResultsView /> : view === 'user' ? <UserInterface /> : <ParallelApp />}
     </Box>
   );
 }
