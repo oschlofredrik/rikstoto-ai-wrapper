@@ -16,9 +16,9 @@ import {
 
 interface PrizeCalculatorProps {
   prizes?: {
-    sevenCorrect?: { amount: number; count: number };
-    sixCorrect?: { amount: number; count: number };
-    fiveCorrect?: { amount: number; count: number };
+    sevenCorrect: { amount: number; count: number };
+    sixCorrect: { amount: number; count: number };
+    fiveCorrect: { amount: number; count: number };
   };
 }
 
