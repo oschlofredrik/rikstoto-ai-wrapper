@@ -967,6 +967,253 @@ async def test_models():
     
     return {"models_tested": results, "token_configured": bool(api_token)}
 
+# ============================================================================
+# JSON GENERATOR FOR TESTING
+# ============================================================================
+
+import random
+from typing import Literal
+
+# Norwegian Horse Racing Data Pools
+NORWEGIAN_HORSE_NAMES = [
+    "Tangen Haap", "Looking Superb", "Wilda", "Sweetlikecandybar", "Disco Volante",
+    "Bolt Brodde", "Clodrique", "Flash Forward", "Victory Lane", "Thunder Strike",
+    "Northern Star", "Quick Silver", "Midnight Express", "Storm Chaser", "Dark Shadow",
+    "Lucky Seven", "Speed Demon", "Final Rush", "Viking Storm", "Ice Queen",
+    "Red Lightning", "Blue Diamond", "Green Flash", "Yellow Fever", "Orange Crush",
+    "Purple Rain", "Black Beauty", "White Knight", "Golden Arrow", "Silver Bullet",
+    "Power Drive", "Easy Rider", "Slow Motion", "Last Chance", "First Class",
+    "Royal Fortune", "Diamond King", "Emerald Queen", "Ruby Red", "Sapphire Blue",
+    "Pearl White", "Crystal Clear", "Alpha Centauri", "Beta Minor", "Gamma Ray",
+    "Delta Force", "Epsilon Plus", "Zeta Jones", "Eta Carinae", "Theta Wave",
+    "Iota Star", "Quantum Leap", "Sonic Boom", "Light Speed", "Warp Drive",
+    "Hyper Space", "Stellar Wind", "Cosmic Ray", "Solar Flare", "Speed King",
+    "Zulu Warrior", "Powerful Dream", "Night Runner", "Sky Walker", "Moon Shadow",
+    "Star Gazer", "Wind Rider", "Fire Storm", "Ice Breaker", "Mountain King",
+    "Valley Queen", "River Dance", "Ocean Wave", "Desert Storm", "Arctic Fox",
+    "Nordic Prince", "Viking Queen", "Thor's Hammer", "Odin's Raven", "Freya's Gift",
+    "Loki's Trick", "Balder's Light", "Heimdall's Watch", "Frigg's Blessing", "Tyr's Sword"
+]
+
+NORWEGIAN_DRIVERS = [
+    "Vidar Hop", "Ulf Ohlsson", "Magnus Teien Gundersen", "Bjørn Goop", "Adrian Solberg Akselsen",
+    "Erik Adielsson", "Gunnar Austevoll", "Tom Erik Solberg", "Eirik Høitomt", "Magnus A Djuse",
+    "Frode Hamre", "Dag-Sveinung Dalen", "Per Oleg Midtfjeld", "Lars Anvar Kolle", "Geir Nordbotten",
+    "Jan Eilert Kvam", "Ole Johan Østre", "Åsbjørn Tengsareid", "Kristian Malmin", "Erlend Rennesvik"
+]
+
+NORWEGIAN_TRAINERS = [
+    "Erlend Rennesvik", "Stefan Melander", "Jan Martinsen", "Lutfi Kolgjini", "Frode Hamre",
+    "Tom Andersen", "Geir Vegard Gundersen", "Roger Walmann", "Dag-Sveinung Dalen", "Øystein Tjomsland",
+    "Are Hyldmo", "Trond Anderssen", "Joakim Løvgren", "Robert Bergh", "Daniel Redén"
+]
+
+NORWEGIAN_TRACKS = [
+    "Bjerke", "Øvrevoll", "Bergen", "Forus", "Leangen", "Momarken", "Harstad", "Bodø", "Klosterskogen", "Jarlsberg"
+]
+
+RACE_DISTANCES = [1609, 2100, 2140, 2600, 2609, 3100]
+START_METHODS = ["A", "V"]  # A = Auto, V = Volt
+
+class JsonGeneratorRequest(BaseModel):
+    product: Literal["V75", "V64", "V5", "DD", "Stalltips"] = "V75"
+    scenario: Literal["favorites", "upsets", "mixed", "random"] = "mixed"
+    track: Optional[str] = None
+    include_stalltips: bool = True
+    include_betting_distribution: bool = True
+    seed: Optional[int] = None
+
+@app.post("/api/generate-json")
+async def generate_test_json(request: JsonGeneratorRequest):
+    """Generate realistic V75/V64/V5 test JSON data for AI model testing."""
+    
+    # Set random seed for reproducibility if provided
+    if request.seed:
+        random.seed(request.seed)
+    
+    # Determine number of races based on product
+    num_races = {
+        "V75": 7,
+        "V64": 6,
+        "V5": 5,
+        "DD": 2,
+        "Stalltips": 7
+    }.get(request.product, 7)
+    
+    # Select track
+    track = request.track or random.choice(NORWEGIAN_TRACKS)
+    
+    # Generate date (random date in next 30 days)
+    from datetime import date, timedelta
+    race_date = date.today() + timedelta(days=random.randint(1, 30))
+    
+    # Generate base structure
+    json_data = {
+        "product": request.product if request.product != "Stalltips" else "V75",
+        "track": track,
+        "date": race_date.strftime("%Y-%m-%d"),
+        "startTime": f"{random.randint(17, 20)}:{random.choice(['00', '15', '30', '45'])}",
+    }
+    
+    # Add Stalltips info if requested
+    if request.include_stalltips or request.product == "Stalltips":
+        json_data["stalltipsInfo"] = {
+            "type": "Stalltips",
+            "generatedBy": "Rikstoto Algorithm v3.2",
+            "strategy": random.choice(["Favoritt-fokus", "Balansert mix", "Outsider-jakt", "Sikker strategi"]),
+            "confidence": random.choice(["Høy", "Medium", "Moderat"]),
+            "description": "Algoritmisk generert kupong basert på siste odds og spillemønster"
+        }
+    
+    # Generate bet details
+    rows = random.choice([48, 96, 192, 384, 768])
+    json_data["betDetails"] = {
+        "betId": f"{request.product}-{race_date.strftime('%Y-%m%d')}-{track[:2].upper()}-{random.randint(100000, 999999)}",
+        "betType": request.product,
+        "systemPlay": True,
+        "rows": rows,
+        "costPerRow": random.choice([0.5, 1, 2, 5]),
+        "totalCost": rows * random.choice([0.5, 1, 2, 5]),
+        "currency": "NOK",
+        "timestamp": datetime.now().isoformat() + "Z"
+    }
+    
+    # Generate pool info
+    total_pool = random.randint(500000, 15000000)
+    json_data["poolInfo"] = {
+        "totalPool": total_pool,
+        "currentPool": total_pool,
+        "bettingStatus": "open",
+        "jackpot": random.randint(0, 5000000) if random.random() > 0.7 else 0
+    }
+    
+    # Generate races
+    races = []
+    all_horses = random.sample(NORWEGIAN_HORSE_NAMES, min(len(NORWEGIAN_HORSE_NAMES), num_races * 12))
+    horse_index = 0
+    
+    markings = {}
+    bankers = []
+    
+    for race_num in range(1, num_races + 1):
+        num_horses = random.randint(8, 15)
+        race_horses = all_horses[horse_index:horse_index + num_horses]
+        horse_index += num_horses
+        
+        # Generate race data
+        race = {
+            "race": race_num,
+            "name": f"{request.product}-{race_num}" if request.product != "Stalltips" else f"V75-{race_num}",
+            "distance": random.choice(RACE_DISTANCES),
+            "startMethod": random.choice(START_METHODS),
+            "totalStarters": num_horses,
+            "poolSize": random.randint(100000, 2000000)
+        }
+        
+        # Generate betting distribution
+        if request.include_betting_distribution:
+            favorite_horse = random.randint(1, min(3, num_horses))
+            second_horse = random.randint(1, num_horses)
+            while second_horse == favorite_horse:
+                second_horse = random.randint(1, num_horses)
+            
+            race["bettingDistribution"] = {
+                "favorite": {"horse": favorite_horse, "percentage": round(random.uniform(25, 50), 1)},
+                "secondChoice": {"horse": second_horse, "percentage": round(random.uniform(15, 25), 1)},
+                "thirdChoice": {"horse": random.randint(1, num_horses), "percentage": round(random.uniform(8, 15), 1)}
+            }
+        
+        # Generate horse results
+        results = []
+        positions = list(range(1, num_horses + 1))
+        random.shuffle(positions)
+        
+        # Determine marking strategy based on scenario
+        if request.scenario == "favorites":
+            # Mark top 3-4 horses by odds
+            horses_to_mark = random.sample(range(1, min(5, num_horses + 1)), random.randint(2, 4))
+        elif request.scenario == "upsets":
+            # Mark some outsiders
+            horses_to_mark = random.sample(range(max(1, num_horses - 5), num_horses + 1), random.randint(2, 4))
+        else:
+            # Mixed strategy
+            horses_to_mark = random.sample(range(1, num_horses + 1), random.randint(2, 5))
+        
+        markings[str(race_num)] = sorted(horses_to_mark)
+        
+        # Add banker for some races
+        if random.random() > 0.6 and len(horses_to_mark) == 1:
+            bankers.append(race_num)
+        
+        for i, horse_num in enumerate(range(1, num_horses + 1)):
+            horse_data = {
+                "horse": horse_num,
+                "position": positions[i],
+                "marked": "true" if horse_num in horses_to_mark else "false",
+                "name": race_horses[i] if i < len(race_horses) else f"Hest {horse_num}",
+                "driver": random.choice(NORWEGIAN_DRIVERS),
+                "odds": round(random.uniform(1.5, 150), 1),
+                "percentageBet": round(random.uniform(0.5, 45), 1),
+                "amountBet": random.randint(5000, 500000),
+                "publicRanking": i + 1
+            }
+            
+            # Add extra details for marked horses
+            if horse_num in horses_to_mark:
+                horse_data.update({
+                    "trainer": random.choice(NORWEGIAN_TRAINERS),
+                    "form": f"{random.randint(1,9)}-{random.randint(1,9)}-{random.randint(1,9)}-{random.randint(1,9)}-{random.randint(1,9)}",
+                    "winPercentage": random.randint(10, 40),
+                    "placePercentage": random.randint(30, 80),
+                    "earnings": random.randint(100000, 2000000),
+                    "age": random.randint(3, 10),
+                    "gender": random.choice(["H", "V", "G"])
+                })
+            
+            results.append(horse_data)
+        
+        race["results"] = results
+        
+        # Determine winner
+        if request.scenario == "favorites":
+            winner = race["bettingDistribution"]["favorite"]["horse"] if request.include_betting_distribution else 1
+        elif request.scenario == "upsets":
+            winner = random.choice([h for h in range(num_horses//2, num_horses + 1)])
+        else:
+            winner = random.randint(1, num_horses)
+        
+        race["winner"] = winner
+        race["winnerName"] = next((h["name"] for h in results if h["horse"] == winner), "Unknown")
+        race["winnerOdds"] = next((h["odds"] for h in results if h["horse"] == winner), 10.0)
+        race["hit"] = winner in horses_to_mark
+        
+        races.append(race)
+    
+    json_data["markings"] = markings
+    json_data["bankers"] = bankers
+    json_data["raceResults"] = races
+    
+    # Generate result summary
+    correct_races = sum(1 for r in races if r.get("hit", False))
+    json_data["result"] = {
+        "status": "generated",
+        "correctRaces": correct_races,
+        "totalRaces": num_races,
+        "prizeLevel": f"{correct_races} av {num_races} rette"
+    }
+    
+    # Add statistics
+    json_data["statistics"] = {
+        "coveragePercentage": round(random.uniform(0.5, 2.5), 2),
+        "averageWinnerOdds": round(sum(r["winnerOdds"] for r in races) / len(races), 2),
+        "favoriteWins": sum(1 for r in races if r["winner"] <= 3),
+        "outsiderWins": sum(1 for r in races if r["winner"] > num_horses - 3),
+        "totalBettors": random.randint(10000, 100000),
+        "averageBetSize": random.randint(50, 500)
+    }
+    
+    return json_data
+
 # Serve React frontend if build exists
 frontend_build_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "build")
 if os.path.exists(frontend_build_path):

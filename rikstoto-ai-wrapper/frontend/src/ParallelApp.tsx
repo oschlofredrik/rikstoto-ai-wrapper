@@ -56,6 +56,7 @@ import Editor from '@monaco-editor/react';
 import ReactMarkdown from 'react-markdown';
 import axios from 'axios';
 import testDataJson from './testData.json';
+import JsonGenerator from './components/JsonGenerator';
 
 const API_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8000';
 
@@ -110,6 +111,7 @@ function ParallelApp() {
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [configName, setConfigName] = useState('');
   const [jsonModalOpen, setJsonModalOpen] = useState(false);
+  const [generatorOpen, setGeneratorOpen] = useState(false);
 
   useEffect(() => {
     fetchModelsAndDefaults();
@@ -328,6 +330,15 @@ function ParallelApp() {
               <Typography variant="h6">
                 Control Panel
               </Typography>
+              <Tooltip title="Generate Random JSON">
+                <IconButton
+                  color="secondary"
+                  onClick={() => setGeneratorOpen(true)}
+                  size="small"
+                >
+                  <Speed />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Edit JSON Data">
                 <IconButton
                   color="primary"
@@ -670,6 +681,17 @@ function ParallelApp() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* JSON Generator Modal */}
+      <JsonGenerator
+        open={generatorOpen}
+        onClose={() => setGeneratorOpen(false)}
+        onGenerated={(json) => {
+          setJsonInput(json);
+          setGeneratorOpen(false);
+        }}
+        apiUrl={API_URL}
+      />
     </Container>
   );
 }
