@@ -56,6 +56,9 @@ export default function RikstotoInnsiktCard({
     // Clear any existing analysis to show loading state
     setAiAnalysis('');
     
+    // Small delay to ensure UI updates and loading state is visible
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
     try {
       // Prepare the race data with timestamp to avoid caching
       const dataToAnalyze = raceData || {
@@ -91,17 +94,41 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`;
 
       console.log('AI Response:', response.data); // Debug log
       
+      // Ensure minimum loading time for better UX
+      const startTime = Date.now();
+      
       if (response.data.generated_text) {
         setAiAnalysis(response.data.generated_text);
+        
+        // Wait remaining time if response was too quick (minimum 1 second)
+        const elapsedTime = Date.now() - startTime;
+        const minLoadingTime = 1000;
+        if (elapsedTime < minLoadingTime) {
+          await new Promise(resolve => setTimeout(resolve, minLoadingTime - elapsedTime));
+        }
+      } else if (response.data.error) {
+        console.error('API error:', response.data.error);
+        // Show error message instead of default analysis
+        setAiAnalysis(`Feil ved analyse: ${response.data.error}\n\nPrøv igjen eller velg en annen modell.`);
       } else {
         // Fallback text if AI is not available
         console.log('No generated_text in response, using default');
         setAiAnalysis(getDefaultAnalysis());
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('AI analysis error:', error);
-      setAiAnalysis(getDefaultAnalysis());
+      
+      // More informative error handling
+      if (error.response?.data?.detail) {
+        setAiAnalysis(`Feil: ${error.response.data.detail}\n\nPrøv igjen eller velg en annen modell.`);
+      } else if (error.message) {
+        setAiAnalysis(`Nettverksfeil: ${error.message}\n\nSjekk at backend kjører og prøv igjen.`);
+      } else {
+        setAiAnalysis(getDefaultAnalysis());
+      }
     } finally {
+      // Small delay before removing loading state for better UX
+      await new Promise(resolve => setTimeout(resolve, 200));
       setLoading(false);
     }
   };

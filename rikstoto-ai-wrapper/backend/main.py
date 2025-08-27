@@ -122,11 +122,11 @@ MODEL_DEFAULTS = {
         "top_p": 1.0  # Default works well for simpler models
     },
     "o3-mini": {
-        "system_prompt": "Utfør en logisk analyse av følgende bongdata med fokus på sannsynligheter og forventet verdi:\n{{json}}\n\nBruk reasoning til å vurdere: 1) Sjanse for gevinst, 2) Expected value, 3) Risikovurdering",
-        "temperature": 0.3,  # Low for STEM/reasoning tasks (o3-mini specialty)
-        "max_length": 800,  # Increased for detailed reasoning chains
-        "top_p": 0.95  # Slightly constrained for focused reasoning
-        # "reasoning_effort": "medium"  # Will be enabled when Azure supports it (API version 2025-04-01-preview)
+        "system_prompt": "Analyser følgende V75-resultat:\n{{json}}\n\nGi en kort analyse (maks 3-4 setninger) som fokuserer på:\n- Hva som gikk bra med spillet\n- Eventuelle bomvalg eller uflaks\n- Ett konkret tips for neste gang",
+        "temperature": 0.7,  # Balanced for natural language
+        "max_length": 500,  # Shorter for concise responses
+        "top_p": 0.9  # Standard for good variety
+        # Note: O3 models handle reasoning internally, no special params needed
     },
     "mistral-large": {
         "system_prompt": "Analyser veddeløpsdata strukturert:\n{{json}}\n\nPresentér: • Spilltype og struktur\n• Hestevalg med begrunnelse\n• Økonomisk analyse\n• Anbefaling",
