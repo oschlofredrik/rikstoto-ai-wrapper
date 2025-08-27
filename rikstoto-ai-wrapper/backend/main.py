@@ -123,9 +123,9 @@ MODEL_DEFAULTS = {
     },
     "o3-mini": {
         "system_prompt": "Analyser følgende V75-resultat:\n{{json}}\n\nGi en kort analyse (maks 3-4 setninger) som fokuserer på:\n- Hva som gikk bra med spillet\n- Eventuelle bomvalg eller uflaks\n- Ett konkret tips for neste gang",
-        "temperature": 0.7,  # Balanced for natural language
-        "max_length": 500,  # Shorter for concise responses
-        "top_p": 0.9  # Standard for good variety
+        "temperature": 0.4,  # Lower for more focused, consistent responses
+        "max_length": 200,  # Limit to force conciseness
+        "top_p": 0.8  # Slightly constrained for consistency
         # Note: O3 models handle reasoning internally, no special params needed
     },
     "mistral-large": {
@@ -227,7 +227,7 @@ def call_azure_openai(model_name: str, prompt: str, params: Dict[str, Any]) -> A
             ],
             "temperature": params.get("temperature", 0.7),
             "top_p": params.get("top_p", 0.9),
-            "max_tokens": params.get("max_tokens", 500)
+            "max_tokens": params.get("max_tokens", params.get("max_length", 500))
         }
         
         # Add o3-mini specific parameters
@@ -723,13 +723,27 @@ async def generate_text(request: GenerationRequest) -> Dict[str, Any]:
         # Route to appropriate API based on model name
         model_name = request.model_name
         
-        params = {
-            "max_length": request.max_length,
-            "max_tokens": request.max_length,  # For Azure OpenAI
-            "temperature": request.temperature,
-            "top_p": request.top_p,
-            "top_k": request.top_k
-        }
+        # Get model defaults
+        model_defaults = MODEL_DEFAULTS.get(model_name, {})
+        
+        # Use model-specific defaults if available, otherwise use request parameters
+        # For o3-mini, always use model defaults for better responses
+        if model_name in MODEL_DEFAULTS:
+            params = {
+                "max_length": model_defaults.get("max_length", request.max_length),
+                "max_tokens": model_defaults.get("max_length", request.max_length),  # For Azure OpenAI
+                "temperature": model_defaults.get("temperature", request.temperature),
+                "top_p": model_defaults.get("top_p", request.top_p),
+                "top_k": request.top_k or 50
+            }
+        else:
+            params = {
+                "max_length": request.max_length,
+                "max_tokens": request.max_length,  # For Azure OpenAI
+                "temperature": request.temperature,
+                "top_p": request.top_p,
+                "top_k": request.top_k
+            }
         
         # Route to appropriate API based on model
         if model_name in ["gpt-4o", "gpt-4o-mini", "o3-mini"]:
