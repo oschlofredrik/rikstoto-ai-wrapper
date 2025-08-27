@@ -974,42 +974,89 @@ async def test_models():
 import random
 from typing import Literal
 
-# Norwegian Horse Racing Data Pools
+# Norwegian Horse Racing Data Pools - Updated 2024/2025
 NORWEGIAN_HORSE_NAMES = [
+    # Popular current horses
     "Tangen Haap", "Looking Superb", "Wilda", "Sweetlikecandybar", "Disco Volante",
     "Bolt Brodde", "Clodrique", "Flash Forward", "Victory Lane", "Thunder Strike",
+    "Troll Solen", "Myr Faksen", "Grisle Odin G.L.", "Lionel", "Gullrussen",
+    "Alm Svarten", "Philip Lyn", "Voje Pumbaa", "Moe Odin", "Sjur Foten",
+    "Odd Herakles", "Alm Norfinn", "Valle Grim", "Lykkje Svarten", "Tekno Odin",
+    "Finnskog Torden", "Stjerne Faks", "Bånseth", "Rafolo", "Tyrifaksen",
+    
+    # Classic Norwegian names
     "Northern Star", "Quick Silver", "Midnight Express", "Storm Chaser", "Dark Shadow",
     "Lucky Seven", "Speed Demon", "Final Rush", "Viking Storm", "Ice Queen",
     "Red Lightning", "Blue Diamond", "Green Flash", "Yellow Fever", "Orange Crush",
     "Purple Rain", "Black Beauty", "White Knight", "Golden Arrow", "Silver Bullet",
+    
+    # International horses racing in Norway
     "Power Drive", "Easy Rider", "Slow Motion", "Last Chance", "First Class",
     "Royal Fortune", "Diamond King", "Emerald Queen", "Ruby Red", "Sapphire Blue",
     "Pearl White", "Crystal Clear", "Alpha Centauri", "Beta Minor", "Gamma Ray",
     "Delta Force", "Epsilon Plus", "Zeta Jones", "Eta Carinae", "Theta Wave",
+    
+    # Fantasy/creative names
     "Iota Star", "Quantum Leap", "Sonic Boom", "Light Speed", "Warp Drive",
     "Hyper Space", "Stellar Wind", "Cosmic Ray", "Solar Flare", "Speed King",
     "Zulu Warrior", "Powerful Dream", "Night Runner", "Sky Walker", "Moon Shadow",
     "Star Gazer", "Wind Rider", "Fire Storm", "Ice Breaker", "Mountain King",
     "Valley Queen", "River Dance", "Ocean Wave", "Desert Storm", "Arctic Fox",
+    
+    # Norse mythology themed
     "Nordic Prince", "Viking Queen", "Thor's Hammer", "Odin's Raven", "Freya's Gift",
-    "Loki's Trick", "Balder's Light", "Heimdall's Watch", "Frigg's Blessing", "Tyr's Sword"
+    "Loki's Trick", "Balder's Light", "Heimdall's Watch", "Frigg's Blessing", "Tyr's Sword",
+    "Fenris Wolf", "Midgard Serpent", "Valhalla Glory", "Asgard Prince", "Bifrost Runner",
+    "Ragnarok Storm", "Yggdrasil Power", "Mjolnir Force", "Sleipnir Speed", "Gungnir Strike"
 ]
 
 NORWEGIAN_DRIVERS = [
-    "Vidar Hop", "Ulf Ohlsson", "Magnus Teien Gundersen", "Bjørn Goop", "Adrian Solberg Akselsen",
-    "Erik Adielsson", "Gunnar Austevoll", "Tom Erik Solberg", "Eirik Høitomt", "Magnus A Djuse",
-    "Frode Hamre", "Dag-Sveinung Dalen", "Per Oleg Midtfjeld", "Lars Anvar Kolle", "Geir Nordbotten",
-    "Jan Eilert Kvam", "Ole Johan Østre", "Åsbjørn Tengsareid", "Kristian Malmin", "Erlend Rennesvik"
+    # Top current Norwegian drivers 2024/2025
+    "Eirik Høitomt", "Magnus Teien Gundersen", "Åsbjørn Tengsareid", "Frode Hamre",
+    "Vidar Hop", "Tom Erik Solberg", "Adrian Solberg Akselsen", "Per Oleg Midtfjeld",
+    "Ole Johan Østre", "Dag-Sveinung Dalen", "Jan Eilert Kvam", "Lars Anvar Kolle",
+    "Geir Nordbotten", "Kristian Malmin", "Gunnar Austevoll", "Erlend Rennesvik",
+    
+    # Additional active drivers
+    "Lars O. Romtveit", "Kai Johansen", "Hans Chr. Holm", "Johan Kringeland",
+    "Jomar Blekkan", "Cato Antonsen", "Tobias Kilen", "Geir Mikkelsen",
+    "Ove Wassberg", "Thor Borg", "Øystein Austevoll", "Anders Lundstrøm Wolden",
+    
+    # International drivers racing in Norway
+    "Ulf Ohlsson", "Bjørn Goop", "Magnus A Djuse", "Erik Adielsson",
+    "Jorma Kontio", "Örjan Kihlström", "Peter Untersteiner", "Carl Johan Jepson"
 ]
 
 NORWEGIAN_TRAINERS = [
-    "Erlend Rennesvik", "Stefan Melander", "Jan Martinsen", "Lutfi Kolgjini", "Frode Hamre",
-    "Tom Andersen", "Geir Vegard Gundersen", "Roger Walmann", "Dag-Sveinung Dalen", "Øystein Tjomsland",
-    "Are Hyldmo", "Trond Anderssen", "Joakim Løvgren", "Robert Bergh", "Daniel Redén"
+    # Top Norwegian trainers 2024/2025
+    "Frode Hamre", "Erlend Rennesvik", "Geir Vegard Gundersen", "Jan Martinsen",
+    "Lutfi Kolgjini", "Tom Andersen", "Roger Walmann", "Dag-Sveinung Dalen",
+    "Øystein Tjomsland", "Are Hyldmo", "Trond Anderssen", "Cecilie Andersson",
+    "Kristine Kvasnes", "Per Ludvig Nilsen", "Lars O. Romtveit", "Gunnar Austevoll",
+    
+    # Swedish trainers with horses in Norway
+    "Stefan Melander", "Daniel Redén", "Robert Bergh", "Joakim Løvgren",
+    "Björn Goop", "Timo Nurmos", "Jerry Riordan", "Roger Malmqvist"
 ]
 
+# Updated Norwegian tracks 2024/2025
 NORWEGIAN_TRACKS = [
-    "Bjerke", "Øvrevoll", "Bergen", "Forus", "Leangen", "Momarken", "Harstad", "Bodø", "Klosterskogen", "Jarlsberg"
+    "Bjerke",           # Oslo - National arena
+    "Klosterskogen",    # Drammen area
+    "Jarlsberg",        # Tønsberg
+    "Momarken",         # Mysen
+    "Forus",            # Stavanger - Oldest still active
+    "Bergen Travpark",  # Bergen
+    "Biri",             # Gjøvik area
+    "Sørlandet",        # Kristiansand
+    "Harstad",          # Harstad
+    "Bodø",             # Bodø
+    "Varig Orkla Arena", # Orkdal
+    "Voss",             # Voss
+    "Nossum",           # Løten
+    "Rissa",            # Rissa
+    "Lofoten Travpark", # Lofoten
+    "Olsborgmoen",      # Nord-Odal
 ]
 
 RACE_DISTANCES = [1609, 2100, 2140, 2600, 2609, 3100]

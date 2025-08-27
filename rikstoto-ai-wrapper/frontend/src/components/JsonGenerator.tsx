@@ -62,8 +62,20 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
   const [copied, setCopied] = useState(false);
 
   const tracks = [
-    'Bjerke', 'Øvrevoll', 'Bergen', 'Forus', 'Leangen', 
-    'Momarken', 'Harstad', 'Bodø', 'Klosterskogen', 'Jarlsberg'
+    'Bjerke',           // Oslo - Nasjonalarena
+    'Klosterskogen',    // Drammen
+    'Jarlsberg',        // Tønsberg
+    'Momarken',         // Mysen
+    'Forus',            // Stavanger
+    'Bergen Travpark',  // Bergen
+    'Biri',             // Gjøvik
+    'Sørlandet',        // Kristiansand
+    'Harstad',          // Harstad
+    'Bodø',             // Bodø
+    'Varig Orkla Arena', // Orkdal
+    'Voss',             // Voss
+    'Nossum',           // Løten
+    'Rissa',            // Rissa
   ];
 
   const presets = [
