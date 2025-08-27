@@ -17,6 +17,7 @@ import axios from 'axios';
 
 interface RikstotoInnsiktCardProps {
   raceData?: any;
+  systemPrompt?: string;
   defaultOpen?: boolean;
 }
 
@@ -29,6 +30,7 @@ const API_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8
  */
 export default function RikstotoInnsiktCard({ 
   raceData,
+  systemPrompt,
   defaultOpen = true 
 }: RikstotoInnsiktCardProps) {
   const [open, setOpen] = useState(defaultOpen);
@@ -60,8 +62,8 @@ export default function RikstotoInnsiktCard({
         analysis: "Favorittene dominerte, men en outsider på løp 7 ødela for 7 rette."
       };
       
-      // Create system prompt with {{json}} placeholder - professional Rikstoto analysis
-      const systemPrompt = `Du er Rikstoto Innsikt, en ekspert på norsk travsport og hesteveddeløp. Du analyserer V75-resultater for spillere.
+      // Use custom system prompt if provided, otherwise use default
+      const promptToUse = systemPrompt || `Du er Rikstoto Innsikt, en ekspert på norsk travsport og hesteveddeløp. Du analyserer V75-resultater for spillere.
 
 Spilldata:
 {{json}}
@@ -74,7 +76,7 @@ Gi en kort analyse (maks 3-4 setninger) som fokuserer på:
 Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`;
       
       // Replace {{json}} with actual data - exactly like UserInterface does it
-      const fullPrompt = systemPrompt.replace('{{json}}', JSON.stringify(dataToAnalyze, null, 2));
+      const fullPrompt = promptToUse.replace('{{json}}', JSON.stringify(dataToAnalyze, null, 2));
       
       // Use the existing backend AI endpoint - matching working implementation from UserInterface
       const response = await axios.post(`${API_URL}/generate`, {

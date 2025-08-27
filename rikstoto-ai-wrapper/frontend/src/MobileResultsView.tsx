@@ -13,6 +13,7 @@ import {
 } from './components/stalltips';
 import ControlPanel from './components/stalltips/ControlPanel';
 import JsonGenerator from './components/JsonGenerator';
+import SystemPromptModal from './components/SystemPromptModal';
 import axios from 'axios';
 
 const API_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8000';
@@ -45,9 +46,21 @@ export default function MobileResultsView() {
   const [raceResults, setRaceResults] = useState<RaceResult[]>(DEFAULT_RACE_RESULTS);
   const [raceDataForAI, setRaceDataForAI] = useState<any>(null);
   const [showJsonGenerator, setShowJsonGenerator] = useState(false);
+  const [showPromptModal, setShowPromptModal] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiAnalysisKey, setAiAnalysisKey] = useState(0); // Force re-render of AI component
+  const [systemPrompt, setSystemPrompt] = useState<string>(`Du er Rikstoto Innsikt, en ekspert på norsk travsport og hesteveddeløp. Du analyserer V75-resultater for spillere.
+
+Spilldata:
+{{json}}
+
+Gi en kort analyse (maks 3-4 setninger) som fokuserer på:
+- Hva som gikk bra med spillet (treff på outsidere, gode valg)
+- Eventuelle bomvalg eller uflaks
+- Ett konkret tips for neste gang
+
+Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`);
 
   // Generate initial race data for AI
   const generateRaceDataForAI = useCallback((betRes: any, raceRes: RaceResult[]) => {
@@ -153,6 +166,16 @@ export default function MobileResultsView() {
     window.open('https://apps.apple.com/no/app/rikstoto/id409632979', '_blank');
   };
 
+  const handleEditPrompt = () => {
+    setShowPromptModal(true);
+  };
+
+  const handleSavePrompt = (newPrompt: string) => {
+    setSystemPrompt(newPrompt);
+    // Force re-analysis with new prompt
+    setAiAnalysisKey(prev => prev + 1);
+  };
+
   // Initialize race data for AI on mount
   React.useEffect(() => {
     setRaceDataForAI(generateRaceDataForAI(betResult, raceResults));
@@ -165,6 +188,7 @@ export default function MobileResultsView() {
         onGenerateJson={handleGenerateJson}
         onRegenerateAnalysis={handleRegenerateAnalysis}
         onReset={handleReset}
+        onEditPrompt={handleEditPrompt}
         isGenerating={isGenerating}
         isAnalyzing={isAnalyzing}
       />
@@ -175,6 +199,14 @@ export default function MobileResultsView() {
         onClose={() => setShowJsonGenerator(false)}
         onGenerated={handleJsonGenerated}
         apiUrl={API_URL}
+      />
+
+      {/* System Prompt Editor Modal */}
+      <SystemPromptModal
+        open={showPromptModal}
+        onClose={() => setShowPromptModal(false)}
+        currentPrompt={systemPrompt}
+        onSave={handleSavePrompt}
       />
 
       {/* Phone Emulator with Results */}
@@ -224,6 +256,7 @@ export default function MobileResultsView() {
               <RikstotoInnsiktCard 
                 key={aiAnalysisKey} // Force re-render when key changes
                 raceData={raceDataForAI}
+                systemPrompt={systemPrompt}
                 defaultOpen={true}
               />
             </Box>

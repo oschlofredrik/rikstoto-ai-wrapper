@@ -15,13 +15,15 @@ import {
   RestartAlt,
   Settings,
   AutoAwesome,
-  Code
+  Code,
+  Psychology
 } from '@mui/icons-material';
 
 interface ControlPanelProps {
   onGenerateJson: () => void;
   onRegenerateAnalysis: () => void;
   onReset: () => void;
+  onEditPrompt: () => void;
   isGenerating?: boolean;
   isAnalyzing?: boolean;
 }
@@ -34,6 +36,7 @@ export default function ControlPanel({
   onGenerateJson,
   onRegenerateAnalysis,
   onReset,
+  onEditPrompt,
   isGenerating = false,
   isAnalyzing = false
 }: ControlPanelProps) {
@@ -154,6 +157,22 @@ export default function ControlPanel({
             }}
           >
             <RestartAlt />
+          </Fab>
+        </Tooltip>
+
+        <Tooltip title="Edit AI System Prompt" arrow placement="top">
+          <Fab
+            size="medium"
+            onClick={onEditPrompt}
+            sx={{
+              bgcolor: '#9C27B0',
+              color: 'white',
+              '&:hover': {
+                bgcolor: '#7B1FA2'
+              }
+            }}
+          >
+            <Psychology />
           </Fab>
         </Tooltip>
       </Stack>
