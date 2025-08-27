@@ -160,8 +160,7 @@ export default function MobileResultsView() {
       const newRaceData = generateRaceDataForAI(newBetResult, newRaceResults);
       setRaceDataForAI(newRaceData);
       
-      // Force AI component to re-analyze
-      setAiAnalysisKey(prev => prev + 1);
+      // Don't automatically trigger AI analysis - user will do it manually
       
     } catch (error) {
       console.error('Error processing generated JSON:', error);
@@ -173,6 +172,8 @@ export default function MobileResultsView() {
   // Regenerate AI analysis
   const handleRegenerateAnalysis = () => {
     setIsAnalyzing(true);
+    // Force AI component to re-analyze with new key
+    setAiAnalysisKey(prev => prev + 1);
     // Toggle forceRegenerate to trigger new analysis without cache
     setForceRegenerate(prev => !prev);
     // The RikstotoInnsiktCard component will handle the actual API call
@@ -187,7 +188,7 @@ export default function MobileResultsView() {
     setGeneratedJsonData(null);
     setTrackName("Klosterskogen");
     setRaceDateTime("lørdag 16:30");
-    setAiAnalysisKey(prev => prev + 1);
+    // Don't automatically trigger AI analysis on reset
   };
 
   const handleSubscribe = () => {
@@ -213,16 +214,14 @@ export default function MobileResultsView() {
     setSystemPrompt(newPrompt);
     // Save to localStorage for persistence
     localStorage.setItem(PROMPT_STORAGE_KEY, newPrompt);
-    // Force re-analysis with new prompt
-    setAiAnalysisKey(prev => prev + 1);
+    // Don't automatically trigger AI analysis when prompt changes
   };
 
   const handleModelChange = (model: string) => {
     setSelectedModel(model);
     // Save to localStorage for persistence
     localStorage.setItem('rikstoto_selected_model', model);
-    // Force re-analysis with new model
-    setForceRegenerate(prev => !prev);
+    // Don't automatically trigger AI analysis when model changes
   };
 
   // Initialize race data for AI on mount
@@ -314,7 +313,7 @@ export default function MobileResultsView() {
                 key={aiAnalysisKey} // Force re-render when key changes
                 raceData={raceDataForAI}
                 systemPrompt={systemPrompt}
-                defaultOpen={true}
+                defaultOpen={false}
                 modelName={selectedModel}
                 forceRegenerate={forceRegenerate}
               />

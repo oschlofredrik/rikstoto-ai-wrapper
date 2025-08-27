@@ -11,7 +11,9 @@ import {
   FormControl,
   Select,
   MenuItem,
-  SelectChangeEvent
+  SelectChangeEvent,
+  Divider,
+  Button
 } from '@mui/material';
 import {
   Casino,
@@ -20,7 +22,8 @@ import {
   Settings,
   AutoAwesome,
   Code,
-  Psychology
+  Psychology,
+  PlayArrow
 } from '@mui/icons-material';
 
 interface ControlPanelProps {
@@ -120,43 +123,6 @@ export default function ControlPanel({
           </span>
         </Tooltip>
 
-        <Tooltip title="Regenerate AI Analysis" arrow placement="top">
-          <span>
-            <Fab
-              size="medium"
-              onClick={onRegenerateAnalysis}
-              disabled={isAnalyzing}
-              sx={{
-                bgcolor: '#FFF155',
-                color: '#333',
-                '&:hover': {
-                  bgcolor: '#FFE933'
-                },
-                '&.Mui-disabled': {
-                  bgcolor: '#E0E0E0'
-                }
-              }}
-            >
-              {isAnalyzing ? (
-                <Box
-                  sx={{
-                    animation: 'pulse 1.5s ease-in-out infinite',
-                    '@keyframes pulse': {
-                      '0%': { opacity: 1 },
-                      '50%': { opacity: 0.5 },
-                      '100%': { opacity: 1 }
-                    }
-                  }}
-                >
-                  <AutoAwesome />
-                </Box>
-              ) : (
-                <AutoAwesome />
-              )}
-            </Fab>
-          </span>
-        </Tooltip>
-
         <Tooltip title="Reset to Default" arrow placement="top">
           <Fab
             size="medium"
@@ -190,16 +156,33 @@ export default function ControlPanel({
         </Tooltip>
       </Stack>
 
-      {/* Model Selector */}
-      <FormControl size="small" sx={{ mt: 2, width: '100%' }}>
-        <Typography variant="caption" sx={{ mb: 0.5, color: '#666' }}>
-          AI Model
+      <Divider sx={{ my: 2 }} />
+
+      {/* AI Analysis Section */}
+      <Box sx={{ width: '100%' }}>
+        <Typography 
+          variant="caption" 
+          sx={{ 
+            display: 'block',
+            mb: 1,
+            color: '#666',
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
+          }}
+        >
+          AI Analyse
         </Typography>
+        
+        {/* Model Selector */}
         <Select
           value={selectedModel}
           onChange={handleModelChange}
+          size="small"
+          fullWidth
           sx={{
             fontSize: '12px',
+            mb: 1.5,
             '& .MuiSelect-select': {
               py: 0.5,
               px: 1
@@ -210,24 +193,61 @@ export default function ControlPanel({
           <MenuItem value="gpt-4o">GPT-4o (Beste)</MenuItem>
           <MenuItem value="o3-mini">O3 Mini (Reasoning)</MenuItem>
         </Select>
-      </FormControl>
 
-      <Stack 
-        direction="row" 
-        spacing={1} 
-        sx={{ 
-          mt: 2, 
-          pt: 2, 
-          borderTop: '1px solid #E0E0E0',
-          justifyContent: 'center'
-        }}
-      >
-        <Typography variant="caption" sx={{ color: '#999' }}>
-          {isGenerating && 'Generating JSON...'}
-          {isAnalyzing && 'Analyzing with AI...'}
-          {!isGenerating && !isAnalyzing && 'Ready'}
+        {/* Run Analysis Button */}
+        <Button
+          fullWidth
+          variant="contained"
+          startIcon={
+            isAnalyzing ? (
+              <Box
+                sx={{
+                  animation: 'spin 1s linear infinite',
+                  '@keyframes spin': {
+                    '0%': { transform: 'rotate(0deg)' },
+                    '100%': { transform: 'rotate(360deg)' }
+                  }
+                }}
+              >
+                <AutoAwesome />
+              </Box>
+            ) : (
+              <PlayArrow />
+            )
+          }
+          onClick={onRegenerateAnalysis}
+          disabled={isAnalyzing || isGenerating}
+          sx={{
+            bgcolor: '#4CAF50',
+            color: 'white',
+            fontWeight: 600,
+            py: 1.5,
+            '&:hover': {
+              bgcolor: '#45a049'
+            },
+            '&.Mui-disabled': {
+              bgcolor: '#E0E0E0'
+            }
+          }}
+        >
+          {isAnalyzing ? 'Analyserer...' : 'Kjør AI-analyse'}
+        </Button>
+
+        {/* Status text */}
+        <Typography 
+          variant="caption" 
+          sx={{ 
+            display: 'block',
+            textAlign: 'center',
+            mt: 1,
+            color: isAnalyzing ? '#4CAF50' : '#999'
+          }}
+        >
+          {isGenerating && 'Genererer JSON...'}
+          {isAnalyzing && 'Analyserer med AI...'}
+          {!isGenerating && !isAnalyzing && 'Klar'}
         </Typography>
-      </Stack>
+      </Box>
     </Paper>
   );
 }

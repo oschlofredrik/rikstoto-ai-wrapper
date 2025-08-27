@@ -1,0 +1,1113 @@
+{
+    "product": "V64",
+    "track": "Bod\u00f8",
+    "date": "2025-09-22",
+    "startTime": "17:15",
+    "stalltipsInfo": {
+        "type": "Stalltips",
+        "generatedBy": "Rikstoto Algorithm v3.2",
+        "strategy": "Balansert mix",
+        "confidence": "Moderat",
+        "description": "Algoritmisk generert kupong basert p\u00e5 siste odds og spillem\u00f8nster"
+    },
+    "betDetails": {
+        "betId": "V64-2025-0922-BO-283736",
+        "betType": "V64",
+        "systemPlay": true,
+        "rows": 768,
+        "costPerRow": 5.0,
+        "totalCost": 3840,
+        "currency": "NOK",
+        "timestamp": "2025-08-27T13:16:05.571029Z"
+    },
+    "poolInfo": {
+        "totalPool": 5927538,
+        "currentPool": 5927538,
+        "bettingStatus": "open",
+        "jackpot": 0
+    },
+    "markings": {
+        "1": [
+            1,
+            2,
+            4
+        ],
+        "2": [
+            6,
+            11,
+            13
+        ],
+        "3": [
+            2,
+            4
+        ],
+        "4": [
+            3,
+            9,
+            10,
+            13
+        ],
+        "5": [
+            2,
+            3,
+            5,
+            7,
+            8
+        ],
+        "6": [
+            6,
+            8,
+            10,
+            11,
+            12
+        ]
+    },
+    "bankers": [],
+    "raceResults": [
+        {
+            "race": 1,
+            "name": "V64-1",
+            "distance": 2140,
+            "startMethod": "V",
+            "totalStarters": 9,
+            "poolSize": 745709,
+            "bettingDistribution": {
+                "favorite": {
+                    "horse": 2,
+                    "percentage": 42.5
+                },
+                "secondChoice": {
+                    "horse": 6,
+                    "percentage": 17.9
+                },
+                "thirdChoice": {
+                    "horse": 5,
+                    "percentage": 11.2
+                }
+            },
+            "results": [
+                {
+                    "horse": 1,
+                    "position": 7,
+                    "marked": "true",
+                    "name": "Diamond King",
+                    "driver": "Erlend Rennesvik",
+                    "odds": 72.8,
+                    "percentageBet": 6.8,
+                    "amountBet": 31515,
+                    "publicRanking": 1,
+                    "trainer": "Lutfi Kolgjini",
+                    "form": "4-6-8-4-6",
+                    "winPercentage": 23,
+                    "placePercentage": 53,
+                    "earnings": 1935962,
+                    "age": 7,
+                    "gender": "H"
+                },
+                {
+                    "horse": 2,
+                    "position": 1,
+                    "marked": "true",
+                    "name": "Lucky Seven",
+                    "driver": "Magnus A Djuse",
+                    "odds": 38.5,
+                    "percentageBet": 5.6,
+                    "amountBet": 179397,
+                    "publicRanking": 2,
+                    "trainer": "Erlend Rennesvik",
+                    "form": "4-4-1-1-3",
+                    "winPercentage": 15,
+                    "placePercentage": 37,
+                    "earnings": 208782,
+                    "age": 7,
+                    "gender": "G"
+                },
+                {
+                    "horse": 3,
+                    "position": 9,
+                    "marked": "false",
+                    "name": "Sweetlikecandybar",
+                    "driver": "Magnus Teien Gundersen",
+                    "odds": 138.6,
+                    "percentageBet": 11.1,
+                    "amountBet": 63251,
+                    "publicRanking": 3
+                },
+                {
+                    "horse": 4,
+                    "position": 8,
+                    "marked": "true",
+                    "name": "Tyr's Sword",
+                    "driver": "Eirik H\u00f8itomt",
+                    "odds": 133.9,
+                    "percentageBet": 26.8,
+                    "amountBet": 409156,
+                    "publicRanking": 4,
+                    "trainer": "Trond Anderssen",
+                    "form": "4-4-8-8-8",
+                    "winPercentage": 34,
+                    "placePercentage": 49,
+                    "earnings": 1542378,
+                    "age": 10,
+                    "gender": "V"
+                },
+                {
+                    "horse": 5,
+                    "position": 6,
+                    "marked": "false",
+                    "name": "Cosmic Ray",
+                    "driver": "Frode Hamre",
+                    "odds": 96.8,
+                    "percentageBet": 0.8,
+                    "amountBet": 421393,
+                    "publicRanking": 5
+                },
+                {
+                    "horse": 6,
+                    "position": 3,
+                    "marked": "false",
+                    "name": "Heimdall's Watch",
+                    "driver": "Vidar Hop",
+                    "odds": 29.8,
+                    "percentageBet": 27.0,
+                    "amountBet": 260481,
+                    "publicRanking": 6
+                },
+                {
+                    "horse": 7,
+                    "position": 2,
+                    "marked": "false",
+                    "name": "Thunder Strike",
+                    "driver": "Eirik H\u00f8itomt",
+                    "odds": 28.2,
+                    "percentageBet": 34.1,
+                    "amountBet": 268576,
+                    "publicRanking": 7
+                },
+                {
+                    "horse": 8,
+                    "position": 4,
+                    "marked": "false",
+                    "name": "Dark Shadow",
+                    "driver": "\u00c5sbj\u00f8rn Tengsareid",
+                    "odds": 21.6,
+                    "percentageBet": 24.6,
+                    "amountBet": 448117,
+                    "publicRanking": 8
+                },
+                {
+                    "horse": 9,
+                    "position": 5,
+                    "marked": "false",
+                    "name": "Wind Rider",
+                    "driver": "Lars Anvar Kolle",
+                    "odds": 35.4,
+                    "percentageBet": 4.9,
+                    "amountBet": 54908,
+                    "publicRanking": 9
+                }
+            ],
+            "winner": 8,
+            "winnerName": "Dark Shadow",
+            "winnerOdds": 21.6,
+            "hit": true
+        },
+        {
+            "race": 2,
+            "name": "V64-2",
+            "distance": 2600,
+            "startMethod": "V",
+            "totalStarters": 13,
+            "poolSize": 1130274,
+            "bettingDistribution": {
+                "favorite": {
+                    "horse": 1,
+                    "percentage": 41.6
+                },
+                "secondChoice": {
+                    "horse": 7,
+                    "percentage": 19.2
+                },
+                "thirdChoice": {
+                    "horse": 11,
+                    "percentage": 10.3
+                }
+            },
+            "results": [
+                {
+                    "horse": 1,
+                    "position": 11,
+                    "marked": "false",
+                    "name": "Orange Crush",
+                    "driver": "Magnus A Djuse",
+                    "odds": 49.8,
+                    "percentageBet": 14.0,
+                    "amountBet": 217887,
+                    "publicRanking": 1
+                },
+                {
+                    "horse": 2,
+                    "position": 12,
+                    "marked": "false",
+                    "name": "Black Beauty",
+                    "driver": "Per Oleg Midtfjeld",
+                    "odds": 1.7,
+                    "percentageBet": 12.1,
+                    "amountBet": 88288,
+                    "publicRanking": 2
+                },
+                {
+                    "horse": 3,
+                    "position": 13,
+                    "marked": "false",
+                    "name": "Odin's Raven",
+                    "driver": "Ulf Ohlsson",
+                    "odds": 27.0,
+                    "percentageBet": 6.1,
+                    "amountBet": 127703,
+                    "publicRanking": 3
+                },
+                {
+                    "horse": 4,
+                    "position": 7,
+                    "marked": "false",
+                    "name": "Disco Volante",
+                    "driver": "Kristian Malmin",
+                    "odds": 59.3,
+                    "percentageBet": 15.3,
+                    "amountBet": 430918,
+                    "publicRanking": 4
+                },
+                {
+                    "horse": 5,
+                    "position": 1,
+                    "marked": "false",
+                    "name": "Stellar Wind",
+                    "driver": "\u00c5sbj\u00f8rn Tengsareid",
+                    "odds": 66.9,
+                    "percentageBet": 12.3,
+                    "amountBet": 32783,
+                    "publicRanking": 5
+                },
+                {
+                    "horse": 6,
+                    "position": 6,
+                    "marked": "true",
+                    "name": "Zeta Jones",
+                    "driver": "Kristian Malmin",
+                    "odds": 97.3,
+                    "percentageBet": 18.6,
+                    "amountBet": 25513,
+                    "publicRanking": 6,
+                    "trainer": "Erlend Rennesvik",
+                    "form": "6-5-3-2-7",
+                    "winPercentage": 31,
+                    "placePercentage": 37,
+                    "earnings": 1164461,
+                    "age": 8,
+                    "gender": "G"
+                },
+                {
+                    "horse": 7,
+                    "position": 3,
+                    "marked": "false",
+                    "name": "Star Gazer",
+                    "driver": "Tom Erik Solberg",
+                    "odds": 56.8,
+                    "percentageBet": 7.6,
+                    "amountBet": 286260,
+                    "publicRanking": 7
+                },
+                {
+                    "horse": 8,
+                    "position": 8,
+                    "marked": "false",
+                    "name": "Mountain King",
+                    "driver": "Gunnar Austevoll",
+                    "odds": 40.3,
+                    "percentageBet": 36.9,
+                    "amountBet": 466845,
+                    "publicRanking": 8
+                },
+                {
+                    "horse": 9,
+                    "position": 5,
+                    "marked": "false",
+                    "name": "Pearl White",
+                    "driver": "Magnus A Djuse",
+                    "odds": 88.3,
+                    "percentageBet": 41.8,
+                    "amountBet": 435899,
+                    "publicRanking": 9
+                },
+                {
+                    "horse": 10,
+                    "position": 2,
+                    "marked": "false",
+                    "name": "Theta Wave",
+                    "driver": "Vidar Hop",
+                    "odds": 109.8,
+                    "percentageBet": 11.2,
+                    "amountBet": 102737,
+                    "publicRanking": 10
+                },
+                {
+                    "horse": 11,
+                    "position": 4,
+                    "marked": "true",
+                    "name": "Nordic Prince",
+                    "driver": "Eirik H\u00f8itomt",
+                    "odds": 45.2,
+                    "percentageBet": 0.7,
+                    "amountBet": 287518,
+                    "publicRanking": 11,
+                    "trainer": "Daniel Red\u00e9n",
+                    "form": "3-4-5-4-2",
+                    "winPercentage": 40,
+                    "placePercentage": 69,
+                    "earnings": 559527,
+                    "age": 8,
+                    "gender": "V"
+                },
+                {
+                    "horse": 12,
+                    "position": 9,
+                    "marked": "false",
+                    "name": "Bolt Brodde",
+                    "driver": "Ole Johan \u00d8stre",
+                    "odds": 71.1,
+                    "percentageBet": 34.3,
+                    "amountBet": 476662,
+                    "publicRanking": 12
+                },
+                {
+                    "horse": 13,
+                    "position": 10,
+                    "marked": "true",
+                    "name": "Powerful Dream",
+                    "driver": "Ulf Ohlsson",
+                    "odds": 12.3,
+                    "percentageBet": 33.3,
+                    "amountBet": 370921,
+                    "publicRanking": 13,
+                    "trainer": "Geir Vegard Gundersen",
+                    "form": "6-3-9-6-3",
+                    "winPercentage": 16,
+                    "placePercentage": 63,
+                    "earnings": 197337,
+                    "age": 9,
+                    "gender": "H"
+                }
+            ],
+            "winner": 7,
+            "winnerName": "Star Gazer",
+            "winnerOdds": 56.8,
+            "hit": true
+        },
+        {
+            "race": 3,
+            "name": "V64-3",
+            "distance": 2100,
+            "startMethod": "A",
+            "totalStarters": 8,
+            "poolSize": 1091430,
+            "bettingDistribution": {
+                "favorite": {
+                    "horse": 2,
+                    "percentage": 27.7
+                },
+                "secondChoice": {
+                    "horse": 1,
+                    "percentage": 18.9
+                },
+                "thirdChoice": {
+                    "horse": 4,
+                    "percentage": 9.9
+                }
+            },
+            "results": [
+                {
+                    "horse": 1,
+                    "position": 7,
+                    "marked": "false",
+                    "name": "Moon Shadow",
+                    "driver": "Jan Eilert Kvam",
+                    "odds": 85.0,
+                    "percentageBet": 8.5,
+                    "amountBet": 482559,
+                    "publicRanking": 1
+                },
+                {
+                    "horse": 2,
+                    "position": 6,
+                    "marked": "true",
+                    "name": "Wilda",
+                    "driver": "Gunnar Austevoll",
+                    "odds": 127.8,
+                    "percentageBet": 38.9,
+                    "amountBet": 36558,
+                    "publicRanking": 2,
+                    "trainer": "Joakim L\u00f8vgren",
+                    "form": "4-6-2-3-2",
+                    "winPercentage": 27,
+                    "placePercentage": 36,
+                    "earnings": 1301301,
+                    "age": 6,
+                    "gender": "H"
+                },
+                {
+                    "horse": 3,
+                    "position": 2,
+                    "marked": "false",
+                    "name": "Quick Silver",
+                    "driver": "Magnus A Djuse",
+                    "odds": 141.1,
+                    "percentageBet": 8.7,
+                    "amountBet": 126796,
+                    "publicRanking": 3
+                },
+                {
+                    "horse": 4,
+                    "position": 3,
+                    "marked": "true",
+                    "name": "Purple Rain",
+                    "driver": "Erlend Rennesvik",
+                    "odds": 44.2,
+                    "percentageBet": 36.1,
+                    "amountBet": 441288,
+                    "publicRanking": 4,
+                    "trainer": "Joakim L\u00f8vgren",
+                    "form": "4-6-8-6-9",
+                    "winPercentage": 12,
+                    "placePercentage": 59,
+                    "earnings": 292060,
+                    "age": 5,
+                    "gender": "H"
+                },
+                {
+                    "horse": 5,
+                    "position": 1,
+                    "marked": "false",
+                    "name": "Ice Breaker",
+                    "driver": "Tom Erik Solberg",
+                    "odds": 13.0,
+                    "percentageBet": 14.1,
+                    "amountBet": 407827,
+                    "publicRanking": 5
+                },
+                {
+                    "horse": 6,
+                    "position": 8,
+                    "marked": "false",
+                    "name": "White Knight",
+                    "driver": "Geir Nordbotten",
+                    "odds": 71.1,
+                    "percentageBet": 17.7,
+                    "amountBet": 17941,
+                    "publicRanking": 6
+                },
+                {
+                    "horse": 7,
+                    "position": 5,
+                    "marked": "false",
+                    "name": "Red Lightning",
+                    "driver": "Erlend Rennesvik",
+                    "odds": 120.6,
+                    "percentageBet": 22.8,
+                    "amountBet": 386234,
+                    "publicRanking": 7
+                },
+                {
+                    "horse": 8,
+                    "position": 4,
+                    "marked": "false",
+                    "name": "Warp Drive",
+                    "driver": "Ulf Ohlsson",
+                    "odds": 78.5,
+                    "percentageBet": 26.6,
+                    "amountBet": 198450,
+                    "publicRanking": 8
+                }
+            ],
+            "winner": 4,
+            "winnerName": "Purple Rain",
+            "winnerOdds": 44.2,
+            "hit": true
+        },
+        {
+            "race": 4,
+            "name": "V64-4",
+            "distance": 2100,
+            "startMethod": "A",
+            "totalStarters": 13,
+            "poolSize": 1934749,
+            "bettingDistribution": {
+                "favorite": {
+                    "horse": 1,
+                    "percentage": 41.4
+                },
+                "secondChoice": {
+                    "horse": 12,
+                    "percentage": 22.7
+                },
+                "thirdChoice": {
+                    "horse": 11,
+                    "percentage": 8.9
+                }
+            },
+            "results": [
+                {
+                    "horse": 1,
+                    "position": 5,
+                    "marked": "false",
+                    "name": "Ruby Red",
+                    "driver": "Magnus A Djuse",
+                    "odds": 103.6,
+                    "percentageBet": 8.5,
+                    "amountBet": 42432,
+                    "publicRanking": 1
+                },
+                {
+                    "horse": 2,
+                    "position": 7,
+                    "marked": "false",
+                    "name": "Light Speed",
+                    "driver": "Vidar Hop",
+                    "odds": 9.6,
+                    "percentageBet": 9.3,
+                    "amountBet": 350389,
+                    "publicRanking": 2
+                },
+                {
+                    "horse": 3,
+                    "position": 11,
+                    "marked": "true",
+                    "name": "Blue Diamond",
+                    "driver": "Jan Eilert Kvam",
+                    "odds": 129.1,
+                    "percentageBet": 42.3,
+                    "amountBet": 475765,
+                    "publicRanking": 3,
+                    "trainer": "Frode Hamre",
+                    "form": "7-8-3-3-1",
+                    "winPercentage": 10,
+                    "placePercentage": 64,
+                    "earnings": 1774445,
+                    "age": 10,
+                    "gender": "H"
+                },
+                {
+                    "horse": 4,
+                    "position": 4,
+                    "marked": "false",
+                    "name": "Night Runner",
+                    "driver": "Magnus A Djuse",
+                    "odds": 98.9,
+                    "percentageBet": 1.5,
+                    "amountBet": 462126,
+                    "publicRanking": 4
+                },
+                {
+                    "horse": 5,
+                    "position": 13,
+                    "marked": "false",
+                    "name": "Last Chance",
+                    "driver": "Geir Nordbotten",
+                    "odds": 135.1,
+                    "percentageBet": 11.0,
+                    "amountBet": 413454,
+                    "publicRanking": 5
+                },
+                {
+                    "horse": 6,
+                    "position": 10,
+                    "marked": "false",
+                    "name": "Viking Queen",
+                    "driver": "Erik Adielsson",
+                    "odds": 97.2,
+                    "percentageBet": 12.0,
+                    "amountBet": 191117,
+                    "publicRanking": 6
+                },
+                {
+                    "horse": 7,
+                    "position": 8,
+                    "marked": "false",
+                    "name": "Quantum Leap",
+                    "driver": "Eirik H\u00f8itomt",
+                    "odds": 33.9,
+                    "percentageBet": 40.5,
+                    "amountBet": 278250,
+                    "publicRanking": 7
+                },
+                {
+                    "horse": 8,
+                    "position": 1,
+                    "marked": "false",
+                    "name": "Northern Star",
+                    "driver": "Tom Erik Solberg",
+                    "odds": 96.8,
+                    "percentageBet": 20.5,
+                    "amountBet": 109692,
+                    "publicRanking": 8
+                },
+                {
+                    "horse": 9,
+                    "position": 6,
+                    "marked": "true",
+                    "name": "Epsilon Plus",
+                    "driver": "Magnus A Djuse",
+                    "odds": 16.9,
+                    "percentageBet": 8.7,
+                    "amountBet": 274828,
+                    "publicRanking": 9,
+                    "trainer": "Erlend Rennesvik",
+                    "form": "9-8-6-2-3",
+                    "winPercentage": 34,
+                    "placePercentage": 36,
+                    "earnings": 395143,
+                    "age": 5,
+                    "gender": "H"
+                },
+                {
+                    "horse": 10,
+                    "position": 2,
+                    "marked": "true",
+                    "name": "Viking Storm",
+                    "driver": "Gunnar Austevoll",
+                    "odds": 140.3,
+                    "percentageBet": 28.3,
+                    "amountBet": 328973,
+                    "publicRanking": 10,
+                    "trainer": "Lutfi Kolgjini",
+                    "form": "6-6-7-4-5",
+                    "winPercentage": 23,
+                    "placePercentage": 41,
+                    "earnings": 1272173,
+                    "age": 10,
+                    "gender": "G"
+                },
+                {
+                    "horse": 11,
+                    "position": 3,
+                    "marked": "false",
+                    "name": "Sky Walker",
+                    "driver": "Tom Erik Solberg",
+                    "odds": 101.7,
+                    "percentageBet": 2.7,
+                    "amountBet": 264333,
+                    "publicRanking": 11
+                },
+                {
+                    "horse": 12,
+                    "position": 12,
+                    "marked": "false",
+                    "name": "Alpha Centauri",
+                    "driver": "Vidar Hop",
+                    "odds": 52.9,
+                    "percentageBet": 1.8,
+                    "amountBet": 447158,
+                    "publicRanking": 12
+                },
+                {
+                    "horse": 13,
+                    "position": 9,
+                    "marked": "true",
+                    "name": "Beta Minor",
+                    "driver": "Tom Erik Solberg",
+                    "odds": 9.0,
+                    "percentageBet": 10.7,
+                    "amountBet": 23269,
+                    "publicRanking": 13,
+                    "trainer": "Daniel Red\u00e9n",
+                    "form": "1-4-5-1-9",
+                    "winPercentage": 23,
+                    "placePercentage": 35,
+                    "earnings": 1292268,
+                    "age": 5,
+                    "gender": "H"
+                }
+            ],
+            "winner": 1,
+            "winnerName": "Ruby Red",
+            "winnerOdds": 103.6,
+            "hit": true
+        },
+        {
+            "race": 5,
+            "name": "V64-5",
+            "distance": 3100,
+            "startMethod": "V",
+            "totalStarters": 8,
+            "poolSize": 1849410,
+            "bettingDistribution": {
+                "favorite": {
+                    "horse": 3,
+                    "percentage": 35.4
+                },
+                "secondChoice": {
+                    "horse": 6,
+                    "percentage": 17.0
+                },
+                "thirdChoice": {
+                    "horse": 6,
+                    "percentage": 9.0
+                }
+            },
+            "results": [
+                {
+                    "horse": 1,
+                    "position": 5,
+                    "marked": "false",
+                    "name": "River Dance",
+                    "driver": "Erik Adielsson",
+                    "odds": 98.4,
+                    "percentageBet": 10.1,
+                    "amountBet": 95190,
+                    "publicRanking": 1
+                },
+                {
+                    "horse": 2,
+                    "position": 3,
+                    "marked": "true",
+                    "name": "Power Drive",
+                    "driver": "Dag-Sveinung Dalen",
+                    "odds": 93.1,
+                    "percentageBet": 5.3,
+                    "amountBet": 174327,
+                    "publicRanking": 2,
+                    "trainer": "Dag-Sveinung Dalen",
+                    "form": "5-9-6-2-6",
+                    "winPercentage": 13,
+                    "placePercentage": 44,
+                    "earnings": 1878343,
+                    "age": 5,
+                    "gender": "V"
+                },
+                {
+                    "horse": 3,
+                    "position": 1,
+                    "marked": "true",
+                    "name": "Midnight Express",
+                    "driver": "Ulf Ohlsson",
+                    "odds": 38.7,
+                    "percentageBet": 43.4,
+                    "amountBet": 395960,
+                    "publicRanking": 3,
+                    "trainer": "Geir Vegard Gundersen",
+                    "form": "6-9-7-8-1",
+                    "winPercentage": 25,
+                    "placePercentage": 51,
+                    "earnings": 739313,
+                    "age": 8,
+                    "gender": "G"
+                },
+                {
+                    "horse": 4,
+                    "position": 6,
+                    "marked": "false",
+                    "name": "Emerald Queen",
+                    "driver": "Dag-Sveinung Dalen",
+                    "odds": 127.3,
+                    "percentageBet": 30.7,
+                    "amountBet": 223746,
+                    "publicRanking": 4
+                },
+                {
+                    "horse": 5,
+                    "position": 7,
+                    "marked": "true",
+                    "name": "Valley Queen",
+                    "driver": "Adrian Solberg Akselsen",
+                    "odds": 39.6,
+                    "percentageBet": 19.0,
+                    "amountBet": 475945,
+                    "publicRanking": 5,
+                    "trainer": "Trond Anderssen",
+                    "form": "9-2-3-8-9",
+                    "winPercentage": 18,
+                    "placePercentage": 61,
+                    "earnings": 610904,
+                    "age": 9,
+                    "gender": "H"
+                },
+                {
+                    "horse": 6,
+                    "position": 2,
+                    "marked": "false",
+                    "name": "Sonic Boom",
+                    "driver": "Jan Eilert Kvam",
+                    "odds": 42.8,
+                    "percentageBet": 28.4,
+                    "amountBet": 323786,
+                    "publicRanking": 6
+                },
+                {
+                    "horse": 7,
+                    "position": 8,
+                    "marked": "true",
+                    "name": "Freya's Gift",
+                    "driver": "Bj\u00f8rn Goop",
+                    "odds": 88.7,
+                    "percentageBet": 36.4,
+                    "amountBet": 495158,
+                    "publicRanking": 7,
+                    "trainer": "Roger Walmann",
+                    "form": "8-6-7-5-8",
+                    "winPercentage": 22,
+                    "placePercentage": 75,
+                    "earnings": 1691958,
+                    "age": 7,
+                    "gender": "G"
+                },
+                {
+                    "horse": 8,
+                    "position": 4,
+                    "marked": "true",
+                    "name": "Eta Carinae",
+                    "driver": "Adrian Solberg Akselsen",
+                    "odds": 134.8,
+                    "percentageBet": 14.9,
+                    "amountBet": 293097,
+                    "publicRanking": 8,
+                    "trainer": "\u00d8ystein Tjomsland",
+                    "form": "3-9-1-1-9",
+                    "winPercentage": 33,
+                    "placePercentage": 70,
+                    "earnings": 253292,
+                    "age": 4,
+                    "gender": "H"
+                }
+            ],
+            "winner": 8,
+            "winnerName": "Eta Carinae",
+            "winnerOdds": 134.8,
+            "hit": true
+        },
+        {
+            "race": 6,
+            "name": "V64-6",
+            "distance": 2140,
+            "startMethod": "V",
+            "totalStarters": 12,
+            "poolSize": 1295573,
+            "bettingDistribution": {
+                "favorite": {
+                    "horse": 1,
+                    "percentage": 44.7
+                },
+                "secondChoice": {
+                    "horse": 5,
+                    "percentage": 24.7
+                },
+                "thirdChoice": {
+                    "horse": 4,
+                    "percentage": 13.8
+                }
+            },
+            "results": [
+                {
+                    "horse": 1,
+                    "position": 8,
+                    "marked": "false",
+                    "name": "Gamma Ray",
+                    "driver": "Magnus A Djuse",
+                    "odds": 135.7,
+                    "percentageBet": 35.9,
+                    "amountBet": 67599,
+                    "publicRanking": 1
+                },
+                {
+                    "horse": 2,
+                    "position": 7,
+                    "marked": "false",
+                    "name": "Ocean Wave",
+                    "driver": "\u00c5sbj\u00f8rn Tengsareid",
+                    "odds": 15.2,
+                    "percentageBet": 21.1,
+                    "amountBet": 161039,
+                    "publicRanking": 2
+                },
+                {
+                    "horse": 3,
+                    "position": 5,
+                    "marked": "false",
+                    "name": "Speed Demon",
+                    "driver": "Tom Erik Solberg",
+                    "odds": 23.3,
+                    "percentageBet": 5.9,
+                    "amountBet": 37501,
+                    "publicRanking": 3
+                },
+                {
+                    "horse": 4,
+                    "position": 12,
+                    "marked": "false",
+                    "name": "Clodrique",
+                    "driver": "Magnus A Djuse",
+                    "odds": 116.2,
+                    "percentageBet": 30.1,
+                    "amountBet": 338759,
+                    "publicRanking": 4
+                },
+                {
+                    "horse": 5,
+                    "position": 9,
+                    "marked": "false",
+                    "name": "Victory Lane",
+                    "driver": "Geir Nordbotten",
+                    "odds": 111.5,
+                    "percentageBet": 38.4,
+                    "amountBet": 495937,
+                    "publicRanking": 5
+                },
+                {
+                    "horse": 6,
+                    "position": 2,
+                    "marked": "true",
+                    "name": "Frigg's Blessing",
+                    "driver": "Lars Anvar Kolle",
+                    "odds": 142.2,
+                    "percentageBet": 25.9,
+                    "amountBet": 80648,
+                    "publicRanking": 6,
+                    "trainer": "Robert Bergh",
+                    "form": "4-4-5-8-2",
+                    "winPercentage": 32,
+                    "placePercentage": 56,
+                    "earnings": 223327,
+                    "age": 7,
+                    "gender": "V"
+                },
+                {
+                    "horse": 7,
+                    "position": 1,
+                    "marked": "false",
+                    "name": "Green Flash",
+                    "driver": "\u00c5sbj\u00f8rn Tengsareid",
+                    "odds": 58.5,
+                    "percentageBet": 37.9,
+                    "amountBet": 38246,
+                    "publicRanking": 7
+                },
+                {
+                    "horse": 8,
+                    "position": 4,
+                    "marked": "true",
+                    "name": "Loki's Trick",
+                    "driver": "Magnus Teien Gundersen",
+                    "odds": 25.5,
+                    "percentageBet": 22.4,
+                    "amountBet": 372219,
+                    "publicRanking": 8,
+                    "trainer": "Robert Bergh",
+                    "form": "2-8-5-2-5",
+                    "winPercentage": 39,
+                    "placePercentage": 31,
+                    "earnings": 263333,
+                    "age": 9,
+                    "gender": "V"
+                },
+                {
+                    "horse": 9,
+                    "position": 11,
+                    "marked": "false",
+                    "name": "Storm Chaser",
+                    "driver": "Ole Johan \u00d8stre",
+                    "odds": 66.7,
+                    "percentageBet": 21.7,
+                    "amountBet": 200682,
+                    "publicRanking": 9
+                },
+                {
+                    "horse": 10,
+                    "position": 3,
+                    "marked": "true",
+                    "name": "Royal Fortune",
+                    "driver": "Bj\u00f8rn Goop",
+                    "odds": 101.2,
+                    "percentageBet": 10.5,
+                    "amountBet": 366441,
+                    "publicRanking": 10,
+                    "trainer": "Frode Hamre",
+                    "form": "8-7-5-4-7",
+                    "winPercentage": 22,
+                    "placePercentage": 73,
+                    "earnings": 357853,
+                    "age": 4,
+                    "gender": "V"
+                },
+                {
+                    "horse": 11,
+                    "position": 10,
+                    "marked": "true",
+                    "name": "Balder's Light",
+                    "driver": "Ulf Ohlsson",
+                    "odds": 145.2,
+                    "percentageBet": 26.8,
+                    "amountBet": 217810,
+                    "publicRanking": 11,
+                    "trainer": "Trond Anderssen",
+                    "form": "4-4-1-9-3",
+                    "winPercentage": 28,
+                    "placePercentage": 60,
+                    "earnings": 1257946,
+                    "age": 3,
+                    "gender": "H"
+                },
+                {
+                    "horse": 12,
+                    "position": 6,
+                    "marked": "true",
+                    "name": "First Class",
+                    "driver": "Ole Johan \u00d8stre",
+                    "odds": 50.7,
+                    "percentageBet": 18.8,
+                    "amountBet": 133922,
+                    "publicRanking": 12,
+                    "trainer": "Frode Hamre",
+                    "form": "9-1-5-6-5",
+                    "winPercentage": 15,
+                    "placePercentage": 36,
+                    "earnings": 619742,
+                    "age": 3,
+                    "gender": "V"
+                }
+            ],
+            "winner": 1,
+            "winnerName": "Gamma Ray",
+            "winnerOdds": 135.7,
+            "hit": true
+        }
+    ],
+    "result": {
+        "status": "generated",
+        "correctRaces": 6,
+        "totalRaces": 6,
+        "prizeLevel": "6 av 6 rette",
+        "payout": 500000,
+        "roi": 13020.83
+    },
+    "prizes": {
+        "sixCorrect": {
+            "winners": 3,
+            "amount": 385290
+        },
+        "fiveCorrect": {
+            "winners": 183,
+            "amount": 7506
+        },
+        "fourCorrect": {
+            "winners": 2808,
+            "amount": 396
+        }
+    },
+    "statistics": {
+        "coveragePercentage": 2.34,
+        "averageWinnerOdds": 82.78,
+        "favoriteWins": 2,
+        "outsiderWins": 0,
+        "totalBettors": 54952,
+        "averageBetSize": 269
+    }
+}

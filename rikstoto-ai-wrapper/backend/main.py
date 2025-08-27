@@ -1123,18 +1123,7 @@ async def generate_test_json(request: JsonGeneratorRequest):
             "poolSize": random.randint(100000, 2000000)
         }
         
-        # Generate betting distribution
-        if request.include_betting_distribution:
-            favorite_horse = random.randint(1, min(3, num_horses))
-            second_horse = random.randint(1, num_horses)
-            while second_horse == favorite_horse:
-                second_horse = random.randint(1, num_horses)
-            
-            race["bettingDistribution"] = {
-                "favorite": {"horse": favorite_horse, "percentage": round(random.uniform(25, 50), 1)},
-                "secondChoice": {"horse": second_horse, "percentage": round(random.uniform(15, 25), 1)},
-                "thirdChoice": {"horse": random.randint(1, num_horses), "percentage": round(random.uniform(8, 15), 1)}
-            }
+        # Betting distribution will be added after horse results are generated
         
         # Generate horse results
         results = []
@@ -1158,16 +1147,43 @@ async def generate_test_json(request: JsonGeneratorRequest):
         if random.random() > 0.6 and len(horses_to_mark) == 1:
             bankers.append(race_num)
         
+        # Generate realistic betting distribution
+        total_pool = race["poolSize"]
+        remaining_pool = total_pool
+        bet_percentages = []
+        
+        # Generate decreasing bet percentages based on ranking
+        for i in range(num_horses):
+            if i == 0:  # Favorite
+                pct = random.uniform(25, 45)
+            elif i == 1:  # Second choice
+                pct = random.uniform(15, 25)
+            elif i == 2:  # Third choice
+                pct = random.uniform(8, 15)
+            elif i < num_horses // 2:  # Mid-field
+                pct = random.uniform(3, 8)
+            else:  # Outsiders
+                pct = random.uniform(0.1, 3)
+            bet_percentages.append(pct)
+        
+        # Normalize percentages to sum to 100
+        total_pct = sum(bet_percentages)
+        bet_percentages = [p / total_pct * 100 for p in bet_percentages]
+        
         for i, horse_num in enumerate(range(1, num_horses + 1)):
+            # Calculate realistic odds from betting percentage
+            bet_pct = bet_percentages[i]
+            odds = round(95 / bet_pct, 1) if bet_pct > 0 else 999.0  # 95% payout after takeout
+            
             horse_data = {
                 "horse": horse_num,
                 "position": positions[i],
                 "marked": "true" if horse_num in horses_to_mark else "false",
                 "name": race_horses[i] if i < len(race_horses) else f"Hest {horse_num}",
                 "driver": random.choice(NORWEGIAN_DRIVERS),
-                "odds": round(random.uniform(1.5, 150), 1),
-                "percentageBet": round(random.uniform(0.5, 45), 1),
-                "amountBet": random.randint(5000, 500000),
+                "odds": min(odds, 999.0),  # Cap at 999
+                "percentageBet": round(bet_pct, 1),
+                "amountBet": int(total_pool * bet_pct / 100),
                 "publicRanking": i + 1
             }
             
@@ -1187,9 +1203,19 @@ async def generate_test_json(request: JsonGeneratorRequest):
         
         race["results"] = results
         
+        # Add betting distribution based on the generated data
+        if request.include_betting_distribution:
+            # Find top 3 horses by bet percentage
+            sorted_horses = sorted(results, key=lambda x: x["percentageBet"], reverse=True)
+            race["bettingDistribution"] = {
+                "favorite": {"horse": sorted_horses[0]["horse"], "percentage": sorted_horses[0]["percentageBet"]},
+                "secondChoice": {"horse": sorted_horses[1]["horse"], "percentage": sorted_horses[1]["percentageBet"]},
+                "thirdChoice": {"horse": sorted_horses[2]["horse"], "percentage": sorted_horses[2]["percentageBet"]}
+            }
+        
         # Determine winner
         if request.scenario == "favorites":
-            winner = race["bettingDistribution"]["favorite"]["horse"] if request.include_betting_distribution else 1
+            winner = sorted(results, key=lambda x: x["percentageBet"], reverse=True)[0]["horse"]
         elif request.scenario == "upsets":
             winner = random.choice([h for h in range(num_horses//2, num_horses + 1)])
         else:

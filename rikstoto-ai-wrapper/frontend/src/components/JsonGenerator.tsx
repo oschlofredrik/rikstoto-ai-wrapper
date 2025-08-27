@@ -16,28 +16,17 @@ import {
   Typography,
   Alert,
   CircularProgress,
-  Tabs,
-  Tab,
   Paper,
   Chip,
   Stack,
   Slider,
-  Divider,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails
+  Divider
 } from '@mui/material';
 import {
   Casino,
-  Refresh,
   ContentCopy,
-  Save,
   Check,
-  AutoAwesome,
-  ExpandMore,
-  EmojiEvents,
-  AttachMoney,
-  Settings
+  AutoAwesome
 } from '@mui/icons-material';
 import Editor from '@monaco-editor/react';
 import axios from 'axios';
@@ -50,53 +39,26 @@ interface JsonGeneratorProps {
 }
 
 interface GeneratorConfig {
-  product: 'V75' | 'V64' | 'V5' | 'DD' | 'Stalltips';
-  scenario: 'favorites' | 'upsets' | 'mixed' | 'random' | 'custom';
+  product: 'V75' | 'V64' | 'V5' | 'DD';
+  scenario: 'favorites' | 'upsets' | 'mixed' | 'custom';
   track?: string;
-  includeStalltips: boolean;
   includeBettingDistribution: boolean;
-  seed?: number;
-  // User marking configuration
+  // Custom scenario settings
   desiredCorrect?: number;
-  forceWin?: boolean;
   targetPayout?: number;
-  // Economic parameters
-  stake?: number;
-  rows?: number;
-  poolSize?: number;
-  // Advanced marking
-  markingStrategy?: 'single' | 'system' | 'banker';
-  horsesPerRace?: number[];
-  bankers?: number[];
-}
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-  return (
-    <div hidden={value !== index} {...other}>
-      {value === index && <Box sx={{ pt: 2 }}>{children}</Box>}
-    </div>
-  );
 }
 
 export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: JsonGeneratorProps) {
   const [config, setConfig] = useState<GeneratorConfig>({
     product: 'V75',
     scenario: 'mixed',
-    includeStalltips: true,
     includeBettingDistribution: true
   });
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [generatedJson, setGeneratedJson] = useState<any>(null);
-  const [tabValue, setTabValue] = useState(0);
+  const [showPreview, setShowPreview] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const tracks = [
@@ -105,24 +67,23 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
   ];
 
   const presets = [
-    { name: 'Favoritt-seier', scenario: 'favorites', description: 'Favoritter vinner mest' },
-    { name: 'Outsider-fest', scenario: 'upsets', description: 'Mange overraskelser' },
-    { name: 'Balansert', scenario: 'mixed', description: 'Realistisk mix' },
-    { name: 'Tilfeldig', scenario: 'random', description: 'Helt tilfeldig' },
-    { name: 'Egendefinert', scenario: 'custom', description: 'Velg selv resultat' }
+    { name: 'Favorittseier', scenario: 'favorites', description: 'Favoritter vinner mest', icon: '🏆' },
+    { name: 'Overraskelser', scenario: 'upsets', description: 'Outsidere vinner', icon: '🎲' },
+    { name: 'Realistisk', scenario: 'mixed', description: 'Balansert resultat', icon: '⚖️' },
+    { name: 'Egendefinert', scenario: 'custom', description: 'Velg antall rette', icon: '⚙️' }
   ];
 
-  const advancedPresets = [
-    { name: 'Jackpot', desiredCorrect: 7, forceWin: true, targetPayout: 1000000 },
-    { name: 'Nesten-vinner', desiredCorrect: 6, forceWin: true, targetPayout: 50000 },
-    { name: 'Smågevinst', desiredCorrect: 5, forceWin: true, targetPayout: 500 },
-    { name: 'Tap', desiredCorrect: 3, forceWin: false, targetPayout: 0 }
+  const testPresets = [
+    { name: 'Jackpot', desiredCorrect: 7, targetPayout: 1000000, color: '#FFD700' },
+    { name: 'Nesten', desiredCorrect: 6, targetPayout: 10000, color: '#C0C0C0' },
+    { name: 'Smågevinst', desiredCorrect: 5, targetPayout: 500, color: '#CD7F32' },
+    { name: 'Tap', desiredCorrect: 2, targetPayout: 0, color: '#666' }
   ];
 
   // Get max correct races based on product
   const getMaxCorrect = () => {
     const maxMap: Record<string, number> = {
-      'V75': 7, 'V64': 6, 'V5': 5, 'DD': 2, 'Stalltips': 7
+      'V75': 7, 'V64': 6, 'V5': 5, 'DD': 2
     };
     return maxMap[config.product] || 7;
   };
@@ -136,22 +97,14 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
         product: config.product,
         scenario: config.scenario,
         track: config.track || undefined,
-        include_stalltips: config.includeStalltips,
         include_betting_distribution: config.includeBettingDistribution,
-        seed: config.seed || undefined,
         desired_correct: config.desiredCorrect || undefined,
-        force_win: config.forceWin !== undefined ? config.forceWin : undefined,
-        target_payout: config.targetPayout || undefined,
-        stake: config.stake || undefined,
-        rows: config.rows || undefined,
-        pool_size: config.poolSize || undefined,
-        marking_strategy: config.markingStrategy || undefined,
-        horses_per_race: config.horsesPerRace || undefined,
-        bankers: config.bankers || undefined
+        force_win: config.targetPayout ? config.targetPayout > 0 : undefined,
+        target_payout: config.targetPayout || undefined
       });
       
       setGeneratedJson(response.data);
-      setTabValue(1); // Switch to preview tab
+      setShowPreview(true);
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Failed to generate JSON');
     } finally {
@@ -176,7 +129,7 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
 
   const handleClose = () => {
     setGeneratedJson(null);
-    setTabValue(0);
+    setShowPreview(false);
     setError('');
     onClose();
   };
@@ -188,12 +141,11 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
     }));
   };
 
-  const handleAdvancedPreset = (preset: any) => {
+  const handleTestPreset = (preset: any) => {
     setConfig(prev => ({
       ...prev,
       scenario: 'custom',
       desiredCorrect: preset.desiredCorrect,
-      forceWin: preset.forceWin,
       targetPayout: preset.targetPayout
     }));
   };
@@ -202,44 +154,41 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
     <Dialog 
       open={open} 
       onClose={handleClose}
-      maxWidth="lg"
+      maxWidth="md"
       fullWidth
     >
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <AutoAwesome />
-        JSON Test Data Generator
+      <DialogTitle>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Casino color="primary" />
+          <Typography variant="h6">Generer Test JSON</Typography>
+        </Box>
       </DialogTitle>
       
-      <DialogContent>
-        <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)}>
-          <Tab label="Konfigurasjon" />
-          <Tab label="Forhåndsvisning" disabled={!generatedJson} />
-        </Tabs>
-
-        <TabPanel value={tabValue} index={0}>
+      <DialogContent dividers>
+        {!showPreview ? (
           <Stack spacing={3}>
-            {/* Quick Presets */}
+            {/* Quick presets */}
             <Box>
-              <Typography variant="subtitle2" gutterBottom>
-                Hurtigvalg
+              <Typography variant="subtitle2" gutterBottom color="text.secondary">
+                Velg scenario
               </Typography>
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                 {presets.map(preset => (
                   <Chip
                     key={preset.name}
+                    icon={<Typography>{preset.icon}</Typography>}
                     label={preset.name}
                     onClick={() => handlePresetClick(preset)}
                     color={config.scenario === preset.scenario ? 'primary' : 'default'}
                     variant={config.scenario === preset.scenario ? 'filled' : 'outlined'}
-                    size="small"
                   />
                 ))}
               </Box>
             </Box>
 
-            {/* Product and Track Selection */}
+            {/* Basic settings */}
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <FormControl fullWidth>
+              <FormControl fullWidth size="small">
                 <InputLabel>Produkt</InputLabel>
                 <Select
                   value={config.product}
@@ -250,11 +199,10 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
                   <MenuItem value="V64">V64 (6 løp)</MenuItem>
                   <MenuItem value="V5">V5 (5 løp)</MenuItem>
                   <MenuItem value="DD">DD (2 løp)</MenuItem>
-                  <MenuItem value="Stalltips">Stalltips V75</MenuItem>
                 </Select>
               </FormControl>
 
-              <FormControl fullWidth>
+              <FormControl fullWidth size="small">
                 <InputLabel>Bane</InputLabel>
                 <Select
                   value={config.track || ''}
@@ -269,198 +217,90 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
               </FormControl>
             </Box>
 
-            {/* Scenario and Seed */}
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <FormControl fullWidth>
-                <InputLabel>Scenario</InputLabel>
-                <Select
-                  value={config.scenario}
-                  label="Scenario"
-                  onChange={(e) => setConfig(prev => ({ ...prev, scenario: e.target.value as any }))}
-                >
-                  <MenuItem value="favorites">Favoritter dominerer</MenuItem>
-                  <MenuItem value="upsets">Mange overraskelser</MenuItem>
-                  <MenuItem value="mixed">Balansert resultat</MenuItem>
-                  <MenuItem value="random">Helt tilfeldig</MenuItem>
-                  <MenuItem value="custom">Egendefinert resultat</MenuItem>
-                </Select>
-              </FormControl>
-
-              <TextField
-                fullWidth
-                label="Seed (for reproduserbarhet)"
-                type="number"
-                value={config.seed || ''}
-                onChange={(e) => setConfig(prev => ({ 
-                  ...prev, 
-                  seed: e.target.value ? parseInt(e.target.value) : undefined 
-                }))}
-                helperText="Samme seed gir samme resultat"
-              />
-            </Box>
-
-            {/* Options */}
-            <Box>
-              <Typography variant="subtitle2" gutterBottom>
-                Inkluder data
-              </Typography>
-              <Box>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={config.includeStalltips}
-                      onChange={(e) => setConfig(prev => ({ 
-                        ...prev, 
-                        includeStalltips: e.target.checked 
-                      }))}
-                    />
-                  }
-                  label="Stalltips informasjon"
+            {/* Betting distribution toggle */}
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={config.includeBettingDistribution}
+                  onChange={(e) => setConfig(prev => ({ 
+                    ...prev, 
+                    includeBettingDistribution: e.target.checked 
+                  }))}
                 />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={config.includeBettingDistribution}
-                      onChange={(e) => setConfig(prev => ({ 
-                        ...prev, 
-                        includeBettingDistribution: e.target.checked 
-                      }))}
-                    />
-                  }
-                  label="Spillefordeling per løp"
-                />
-              </Box>
-            </Box>
+              }
+              label="Inkluder innsatsfordeling"
+            />
 
-            <Divider sx={{ my: 2 }} />
-
-            {/* Advanced Controls - Accordion Style */}
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMore />}>
-                <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <EmojiEvents color="primary" />
-                  Resultat-kontroll
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Stack spacing={3}>
-                  {/* Desired correct races */}
-                  {config.scenario === 'custom' && (
-                    <>
-                      <Box>
-                        <Typography gutterBottom>
-                          Ønsket antall rette: {config.desiredCorrect || 'Auto'}
-                        </Typography>
-                        <Slider
-                          value={config.desiredCorrect || 0}
-                          onChange={(_, v) => setConfig(prev => ({ ...prev, desiredCorrect: v as number }))}
-                          min={0}
-                          max={getMaxCorrect()}
-                          marks
-                          valueLabelDisplay="auto"
-                        />
-                      </Box>
-
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            checked={config.forceWin || false}
-                            onChange={(e) => setConfig(prev => ({ ...prev, forceWin: e.target.checked }))}
-                          />
-                        }
-                        label="Garantert gevinst"
+            {/* Custom scenario controls */}
+            {config.scenario === 'custom' && (
+              <>
+                <Divider />
+                <Box>
+                  <Typography variant="subtitle2" gutterBottom color="text.secondary">
+                    Test-presets
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
+                    {testPresets.filter(p => p.desiredCorrect <= getMaxCorrect()).map(preset => (
+                      <Chip
+                        key={preset.name}
+                        label={preset.name}
+                        onClick={() => handleTestPreset(preset)}
+                        sx={{ 
+                          bgcolor: preset.color, 
+                          color: 'white',
+                          '&:hover': { bgcolor: preset.color, opacity: 0.8 }
+                        }}
                       />
-
-                      {config.forceWin && (
-                        <TextField
-                          fullWidth
-                          label="Målgevinst (kr)"
-                          type="number"
-                          value={config.targetPayout || ''}
-                          onChange={(e) => setConfig(prev => ({ 
-                            ...prev, 
-                            targetPayout: e.target.value ? parseInt(e.target.value) : undefined 
-                          }))}
-                        />
-                      )}
-                    </>
-                  )}
-
-                  {/* Quick presets for advanced scenarios */}
-                  <Box>
-                    <Typography variant="caption" gutterBottom display="block">
-                      Test-scenarier
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                      {advancedPresets.map(preset => (
-                        <Chip
-                          key={preset.name}
-                          label={preset.name}
-                          onClick={() => handleAdvancedPreset(preset)}
-                          size="small"
-                          variant="outlined"
-                        />
-                      ))}
-                    </Box>
+                    ))}
                   </Box>
-                </Stack>
-              </AccordionDetails>
-            </Accordion>
+                </Box>
 
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMore />}>
-                <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <AttachMoney color="primary" />
-                  Økonomiske parametre
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Stack spacing={2}>
-                  <Box sx={{ display: 'flex', gap: 2 }}>
-                    <TextField
-                      fullWidth
-                      label="Innsats (kr)"
-                      type="number"
-                      value={config.stake || ''}
-                      onChange={(e) => setConfig(prev => ({ 
-                        ...prev, 
-                        stake: e.target.value ? parseInt(e.target.value) : undefined 
-                      }))}
-                    />
-                    <TextField
-                      fullWidth
-                      label="Antall rekker"
-                      type="number"
-                      value={config.rows || ''}
-                      onChange={(e) => setConfig(prev => ({ 
-                        ...prev, 
-                        rows: e.target.value ? parseInt(e.target.value) : undefined 
-                      }))}
-                    />
-                  </Box>
-                  <TextField
-                    fullWidth
-                    label="Pool-størrelse (kr)"
-                    type="number"
-                    value={config.poolSize || ''}
-                    onChange={(e) => setConfig(prev => ({ 
-                      ...prev, 
-                      poolSize: e.target.value ? parseInt(e.target.value) : undefined 
-                    }))}
-                    helperText="Total omsetning i spillet"
+                <Box>
+                  <Typography gutterBottom>
+                    Antall rette: {config.desiredCorrect || 0} av {getMaxCorrect()}
+                  </Typography>
+                  <Slider
+                    value={config.desiredCorrect || 0}
+                    onChange={(_, v) => setConfig(prev => ({ ...prev, desiredCorrect: v as number }))}
+                    min={0}
+                    max={getMaxCorrect()}
+                    marks
+                    valueLabelDisplay="auto"
                   />
-                </Stack>
-              </AccordionDetails>
-            </Accordion>
+                </Box>
+
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Gevinst (kr)"
+                  type="number"
+                  value={config.targetPayout || ''}
+                  onChange={(e) => setConfig(prev => ({ 
+                    ...prev, 
+                    targetPayout: e.target.value ? parseInt(e.target.value) : undefined 
+                  }))}
+                  helperText="0 for tap, eller ønsket gevinstbeløp"
+                />
+              </>
+            )}
 
             {error && (
               <Alert severity="error">{error}</Alert>
             )}
           </Stack>
-        </TabPanel>
-
-        <TabPanel value={tabValue} index={1}>
-          {generatedJson && (
+        ) : (
+          <Box>
+            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="subtitle1">Generert JSON</Typography>
+              <Button
+                size="small"
+                startIcon={copied ? <Check /> : <ContentCopy />}
+                onClick={handleCopyJson}
+                color={copied ? 'success' : 'default'}
+              >
+                {copied ? 'Kopiert!' : 'Kopier'}
+              </Button>
+            </Box>
             <Paper variant="outlined" sx={{ height: '400px' }}>
               <Editor
                 height="400px"
@@ -469,51 +309,40 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
                 options={{
                   readOnly: true,
                   minimap: { enabled: false },
-                  scrollBeyondLastLine: false,
-                  fontSize: 12
+                  scrollBeyondLastLine: false
                 }}
                 theme="vs-light"
               />
             </Paper>
-          )}
-        </TabPanel>
-      </DialogContent>
-
-      <DialogActions>
-        {generatedJson && (
-          <Button
-            startIcon={copied ? <Check /> : <ContentCopy />}
-            onClick={handleCopyJson}
-            color={copied ? 'success' : 'inherit'}
-          >
-            {copied ? 'Kopiert!' : 'Kopier JSON'}
-          </Button>
+          </Box>
         )}
-        
-        <Box sx={{ flex: 1 }} />
-        
-        <Button onClick={handleClose}>
-          Avbryt
-        </Button>
-        
-        {!generatedJson ? (
-          <Button
-            variant="contained"
-            startIcon={loading ? <CircularProgress size={20} /> : <Casino />}
-            onClick={handleGenerate}
-            disabled={loading}
-          >
-            {loading ? 'Genererer...' : 'Generer JSON'}
-          </Button>
+      </DialogContent>
+      
+      <DialogActions>
+        {showPreview ? (
+          <>
+            <Button onClick={() => setShowPreview(false)}>
+              Tilbake
+            </Button>
+            <Button onClick={handleUseJson} variant="contained" color="primary">
+              Bruk JSON
+            </Button>
+          </>
         ) : (
-          <Button
-            variant="contained"
-            startIcon={<Save />}
-            onClick={handleUseJson}
-            color="success"
-          >
-            Bruk denne JSON
-          </Button>
+          <>
+            <Button onClick={handleClose}>
+              Avbryt
+            </Button>
+            <Button 
+              onClick={handleGenerate}
+              variant="contained"
+              color="primary"
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={20} /> : <AutoAwesome />}
+            >
+              {loading ? 'Genererer...' : 'Generer JSON'}
+            </Button>
+          </>
         )}
       </DialogActions>
     </Dialog>

@@ -33,7 +33,7 @@ const API_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8
 export default function RikstotoInnsiktCard({ 
   raceData,
   systemPrompt,
-  defaultOpen = true,
+  defaultOpen = false,
   modelName = 'gpt-4o-mini',
   forceRegenerate = false
 }: RikstotoInnsiktCardProps) {
@@ -43,18 +43,12 @@ export default function RikstotoInnsiktCard({
   const [lastRegenerate, setLastRegenerate] = useState(forceRegenerate);
 
   useEffect(() => {
-    // Re-generate analysis when component mounts or when explicitly requested
-    if (raceData && (forceRegenerate !== lastRegenerate || !aiAnalysis)) {
-      generateAIAnalysis(forceRegenerate);
+    // Only generate analysis when explicitly requested via forceRegenerate
+    if (raceData && forceRegenerate !== lastRegenerate) {
+      generateAIAnalysis(true); // Always skip cache when manually triggered
       setLastRegenerate(forceRegenerate);
     }
-  }, [forceRegenerate]); // Trigger on forceRegenerate change
-  
-  useEffect(() => {
-    if (open && !aiAnalysis && raceData) {
-      generateAIAnalysis(false);
-    }
-  }, [open]);
+  }, [forceRegenerate]); // Trigger only on forceRegenerate change
 
   const generateAIAnalysis = async (skipCache = false) => {
     setLoading(true);
@@ -180,7 +174,7 @@ En godt balansert bong, men med en outsider som Slave to Queen Cal ville utbetal
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
               <CircularProgress size={30} sx={{ color: '#6B3EFF' }} />
             </Box>
-          ) : (
+          ) : aiAnalysis ? (
             <>
               {aiAnalysis.split('\n\n').map((paragraph, index) => (
                 <Typography 
@@ -211,6 +205,18 @@ En godt balansert bong, men med en outsider som Slave to Queen Cal ville utbetal
                 </Typography>
               </Box>
             </>
+          ) : (
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: '#999', 
+                textAlign: 'center',
+                py: 2,
+                fontStyle: 'italic'
+              }}
+            >
+              Klikk "Kjør AI-analyse" for å generere analyse
+            </Typography>
           )}
         </Box>
       </Collapse>
