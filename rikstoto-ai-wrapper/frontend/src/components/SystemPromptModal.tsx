@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { DEFAULT_SYSTEM_PROMPT } from '../constants/systemPrompt';
 import {
   Dialog,
   DialogTitle,
@@ -26,17 +27,7 @@ interface SystemPromptModalProps {
   onSave: (prompt: string) => void;
 }
 
-const DEFAULT_PROMPT = `Du er Rikstoto Innsikt, en ekspert på norsk travsport og hesteveddeløp. Du analyserer V75-resultater for spillere.
-
-Spilldata:
-{{json}}
-
-Gi en kort analyse (maks 3-4 setninger) som fokuserer på:
-- Hva som gikk bra med spillet (treff på outsidere, gode valg)
-- Eventuelle bomvalg eller uflaks
-- Ett konkret tips for neste gang
-
-Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`;
+// Using shared DEFAULT_SYSTEM_PROMPT from constants
 
 const PROMPT_EXAMPLES = [
   {
@@ -97,7 +88,7 @@ export default function SystemPromptModal({
   };
 
   const handleReset = () => {
-    setPrompt(DEFAULT_PROMPT);
+    setPrompt(DEFAULT_SYSTEM_PROMPT);
   };
 
   const handleExampleClick = (examplePrompt: string) => {

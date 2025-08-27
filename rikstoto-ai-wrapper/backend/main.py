@@ -1017,11 +1017,23 @@ START_METHODS = ["A", "V"]  # A = Auto, V = Volt
 
 class JsonGeneratorRequest(BaseModel):
     product: Literal["V75", "V64", "V5", "DD", "Stalltips"] = "V75"
-    scenario: Literal["favorites", "upsets", "mixed", "random"] = "mixed"
+    scenario: Literal["favorites", "upsets", "mixed", "random", "custom"] = "mixed"
     track: Optional[str] = None
     include_stalltips: bool = True
     include_betting_distribution: bool = True
     seed: Optional[int] = None
+    # Result control parameters
+    desired_correct: Optional[int] = None
+    force_win: Optional[bool] = None
+    target_payout: Optional[int] = None
+    # Economic parameters
+    stake: Optional[int] = None
+    rows: Optional[int] = None
+    pool_size: Optional[int] = None
+    # Advanced marking
+    marking_strategy: Optional[Literal["single", "system", "banker"]] = None
+    horses_per_race: Optional[List[int]] = None
+    bankers: Optional[List[int]] = None
 
 @app.post("/api/generate-json")
 async def generate_test_json(request: JsonGeneratorRequest):
@@ -1066,20 +1078,21 @@ async def generate_test_json(request: JsonGeneratorRequest):
         }
     
     # Generate bet details
-    rows = random.choice([48, 96, 192, 384, 768])
+    rows = request.rows or random.choice([48, 96, 192, 384, 768])
+    stake_amount = request.stake or rows * random.choice([0.5, 1, 2, 5])
     json_data["betDetails"] = {
         "betId": f"{request.product}-{race_date.strftime('%Y-%m%d')}-{track[:2].upper()}-{random.randint(100000, 999999)}",
         "betType": request.product,
         "systemPlay": True,
         "rows": rows,
-        "costPerRow": random.choice([0.5, 1, 2, 5]),
-        "totalCost": rows * random.choice([0.5, 1, 2, 5]),
+        "costPerRow": stake_amount / rows if rows > 0 else 1,
+        "totalCost": stake_amount,
         "currency": "NOK",
         "timestamp": datetime.now().isoformat() + "Z"
     }
     
     # Generate pool info
-    total_pool = random.randint(500000, 15000000)
+    total_pool = request.pool_size or random.randint(500000, 15000000)
     json_data["poolInfo"] = {
         "totalPool": total_pool,
         "currentPool": total_pool,
@@ -1194,8 +1207,20 @@ async def generate_test_json(request: JsonGeneratorRequest):
     json_data["raceResults"] = races
     
     # Generate result summary
-    # Ensure correct_races never exceeds the actual number of races
-    correct_races = min(sum(1 for r in races if r.get("hit", False)), num_races)
+    # If custom scenario with desired_correct, force that number of correct races
+    if request.scenario == "custom" and request.desired_correct is not None:
+        correct_races = min(request.desired_correct, num_races)
+        # Adjust the races to match desired_correct
+        hits_count = 0
+        for race in races:
+            if hits_count < correct_races:
+                race["hit"] = True
+                hits_count += 1
+            else:
+                race["hit"] = False
+    else:
+        # Ensure correct_races never exceeds the actual number of races
+        correct_races = min(sum(1 for r in races if r.get("hit", False)), num_races)
     
     # Calculate prize payouts based on correct races and pool
     total_pool = json_data["poolInfo"]["totalPool"]
@@ -1257,31 +1282,37 @@ async def generate_test_json(request: JsonGeneratorRequest):
         }
     
     # Calculate actual payout for this bet
-    payout = 0
-    if num_races == 7:  # V75
-        if correct_races == 7 and prizes["sevenCorrect"]["amount"]:
-            payout = prizes["sevenCorrect"]["amount"] * rows
-        elif correct_races == 6:
-            payout = prizes["sixCorrect"]["amount"] * rows
-        elif correct_races == 5:
-            payout = prizes["fiveCorrect"]["amount"] * rows
-    elif num_races == 6:  # V64
-        if correct_races == 6 and prizes["sixCorrect"]["amount"]:
-            payout = prizes["sixCorrect"]["amount"] * rows
-        elif correct_races == 5:
-            payout = prizes["fiveCorrect"]["amount"] * rows
-        elif correct_races == 4:
-            payout = prizes["fourCorrect"]["amount"] * rows
-    elif num_races == 5:  # V5
-        if correct_races == 5 and prizes["fiveCorrect"]["amount"]:
-            payout = prizes["fiveCorrect"]["amount"] * rows
-        elif correct_races == 4:
-            payout = prizes["fourCorrect"]["amount"] * rows
-        elif correct_races == 3:
-            payout = prizes["threeCorrect"]["amount"] * rows
-    elif num_races == 2:  # DD
-        if correct_races == 2 and prizes["twoCorrect"]["amount"]:
-            payout = prizes["twoCorrect"]["amount"] * rows
+    # If force_win with target_payout, use that
+    if request.force_win and request.target_payout is not None:
+        payout = request.target_payout
+    else:
+        payout = 0
+        
+        # Calculate regular payout if not forced
+        if num_races == 7:  # V75
+            if correct_races == 7 and prizes["sevenCorrect"]["amount"]:
+                payout = prizes["sevenCorrect"]["amount"] * rows
+            elif correct_races == 6:
+                payout = prizes["sixCorrect"]["amount"] * rows
+            elif correct_races == 5:
+                payout = prizes["fiveCorrect"]["amount"] * rows
+        elif num_races == 6:  # V64
+            if correct_races == 6 and prizes["sixCorrect"]["amount"]:
+                payout = prizes["sixCorrect"]["amount"] * rows
+            elif correct_races == 5:
+                payout = prizes["fiveCorrect"]["amount"] * rows
+            elif correct_races == 4:
+                payout = prizes["fourCorrect"]["amount"] * rows
+        elif num_races == 5:  # V5
+            if correct_races == 5 and prizes["fiveCorrect"]["amount"]:
+                payout = prizes["fiveCorrect"]["amount"] * rows
+            elif correct_races == 4:
+                payout = prizes["fourCorrect"]["amount"] * rows
+            elif correct_races == 3:
+                payout = prizes["threeCorrect"]["amount"] * rows
+        elif num_races == 2:  # DD
+            if correct_races == 2 and prizes["twoCorrect"]["amount"]:
+                payout = prizes["twoCorrect"]["amount"] * rows
     
     json_data["result"] = {
         "status": "generated",

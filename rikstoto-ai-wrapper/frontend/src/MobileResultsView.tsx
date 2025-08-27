@@ -15,6 +15,7 @@ import ControlPanel from './components/stalltips/ControlPanel';
 import JsonGenerator from './components/JsonGenerator';
 import SystemPromptModal from './components/SystemPromptModal';
 import axios from 'axios';
+import { DEFAULT_SYSTEM_PROMPT, PROMPT_STORAGE_KEY } from './constants/systemPrompt';
 
 const API_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8000';
 
@@ -51,17 +52,14 @@ export default function MobileResultsView() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiAnalysisKey, setAiAnalysisKey] = useState(0); // Force re-render of AI component
-  const [systemPrompt, setSystemPrompt] = useState<string>(`Du er Rikstoto Innsikt, en ekspert på norsk travsport og hesteveddeløp. Du analyserer V75-resultater for spillere.
-
-Spilldata:
-{{json}}
-
-Gi en kort analyse (maks 3-4 setninger) som fokuserer på:
-- Hva som gikk bra med spillet (treff på outsidere, gode valg)
-- Eventuelle bomvalg eller uflaks
-- Ett konkret tips for neste gang
-
-Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`);
+  const [trackName, setTrackName] = useState("Klosterskogen");
+  const [raceDateTime, setRaceDateTime] = useState("lørdag 16:30");
+  
+  // Load system prompt from localStorage or use default
+  const [systemPrompt, setSystemPrompt] = useState<string>(() => {
+    const savedPrompt = localStorage.getItem(PROMPT_STORAGE_KEY);
+    return savedPrompt || DEFAULT_SYSTEM_PROMPT;
+  });
 
   // Generate initial race data for AI
   const generateRaceDataForAI = useCallback((betRes: any, raceRes: RaceResult[]) => {
@@ -95,6 +93,19 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`);
       // Store full JSON for detailed components
       setGeneratedJsonData(data);
       
+      // Update track and datetime if available
+      if (data.track) {
+        setTrackName(data.track);
+      }
+      if (data.raceDateTime) {
+        // Format datetime nicely
+        const date = new Date(data.raceDateTime);
+        const dayNames = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag'];
+        const dayName = dayNames[date.getDay()];
+        const time = `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+        setRaceDateTime(`${dayName} ${time}`);
+      }
+      
       // Extract result summary
       if (data.result) {
         const correctRaces = data.result.correctRaces || 0;
@@ -117,7 +128,8 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`);
           // Find the winning horse (position 1)
           const winner = race.results?.find((h: any) => h.position === 1);
           const marked = race.results?.filter((h: any) => h.marked === "true");
-          const isWinner = marked?.some((h: any) => h.position === 1) || false;
+          // Use the hit field from backend if available, otherwise calculate
+          const isWinner = race.hit !== undefined ? race.hit : marked?.some((h: any) => h.position === 1) || false;
           
           return {
             race: race.race,
@@ -160,6 +172,9 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`);
     setBetResult(DEFAULT_BET_RESULT);
     setRaceResults(DEFAULT_RACE_RESULTS);
     setRaceDataForAI(generateRaceDataForAI(DEFAULT_BET_RESULT, DEFAULT_RACE_RESULTS));
+    setGeneratedJsonData(null);
+    setTrackName("Klosterskogen");
+    setRaceDateTime("lørdag 16:30");
     setAiAnalysisKey(prev => prev + 1);
   };
 
@@ -184,6 +199,8 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`);
 
   const handleSavePrompt = (newPrompt: string) => {
     setSystemPrompt(newPrompt);
+    // Save to localStorage for persistence
+    localStorage.setItem(PROMPT_STORAGE_KEY, newPrompt);
     // Force re-analysis with new prompt
     setAiAnalysisKey(prev => prev + 1);
   };
@@ -226,8 +243,8 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`);
         <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#FFF' }}>
           {/* Header with V75 Stalltips branding */}
           <StalltipsHeader 
-            location="Klosterskogen" 
-            datetime="lørdag 16:30" 
+            location={trackName} 
+            datetime={raceDateTime} 
           />
 
           {/* Scrollable content area - Light purple background from Figma */}

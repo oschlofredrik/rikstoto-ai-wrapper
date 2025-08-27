@@ -20,7 +20,12 @@ import {
   Tab,
   Paper,
   Chip,
-  Stack
+  Stack,
+  Slider,
+  Divider,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails
 } from '@mui/material';
 import {
   Casino,
@@ -28,7 +33,11 @@ import {
   ContentCopy,
   Save,
   Check,
-  AutoAwesome
+  AutoAwesome,
+  ExpandMore,
+  EmojiEvents,
+  AttachMoney,
+  Settings
 } from '@mui/icons-material';
 import Editor from '@monaco-editor/react';
 import axios from 'axios';
@@ -42,11 +51,23 @@ interface JsonGeneratorProps {
 
 interface GeneratorConfig {
   product: 'V75' | 'V64' | 'V5' | 'DD' | 'Stalltips';
-  scenario: 'favorites' | 'upsets' | 'mixed' | 'random';
+  scenario: 'favorites' | 'upsets' | 'mixed' | 'random' | 'custom';
   track?: string;
   includeStalltips: boolean;
   includeBettingDistribution: boolean;
   seed?: number;
+  // User marking configuration
+  desiredCorrect?: number;
+  forceWin?: boolean;
+  targetPayout?: number;
+  // Economic parameters
+  stake?: number;
+  rows?: number;
+  poolSize?: number;
+  // Advanced marking
+  markingStrategy?: 'single' | 'system' | 'banker';
+  horsesPerRace?: number[];
+  bankers?: number[];
 }
 
 interface TabPanelProps {
@@ -87,8 +108,24 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
     { name: 'Favoritt-seier', scenario: 'favorites', description: 'Favoritter vinner mest' },
     { name: 'Outsider-fest', scenario: 'upsets', description: 'Mange overraskelser' },
     { name: 'Balansert', scenario: 'mixed', description: 'Realistisk mix' },
-    { name: 'Tilfeldig', scenario: 'random', description: 'Helt tilfeldig' }
+    { name: 'Tilfeldig', scenario: 'random', description: 'Helt tilfeldig' },
+    { name: 'Egendefinert', scenario: 'custom', description: 'Velg selv resultat' }
   ];
+
+  const advancedPresets = [
+    { name: 'Jackpot', desiredCorrect: 7, forceWin: true, targetPayout: 1000000 },
+    { name: 'Nesten-vinner', desiredCorrect: 6, forceWin: true, targetPayout: 50000 },
+    { name: 'Smågevinst', desiredCorrect: 5, forceWin: true, targetPayout: 500 },
+    { name: 'Tap', desiredCorrect: 3, forceWin: false, targetPayout: 0 }
+  ];
+
+  // Get max correct races based on product
+  const getMaxCorrect = () => {
+    const maxMap: Record<string, number> = {
+      'V75': 7, 'V64': 6, 'V5': 5, 'DD': 2, 'Stalltips': 7
+    };
+    return maxMap[config.product] || 7;
+  };
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -101,7 +138,16 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
         track: config.track || undefined,
         include_stalltips: config.includeStalltips,
         include_betting_distribution: config.includeBettingDistribution,
-        seed: config.seed || undefined
+        seed: config.seed || undefined,
+        desired_correct: config.desiredCorrect || undefined,
+        force_win: config.forceWin !== undefined ? config.forceWin : undefined,
+        target_payout: config.targetPayout || undefined,
+        stake: config.stake || undefined,
+        rows: config.rows || undefined,
+        pool_size: config.poolSize || undefined,
+        marking_strategy: config.markingStrategy || undefined,
+        horses_per_race: config.horsesPerRace || undefined,
+        bankers: config.bankers || undefined
       });
       
       setGeneratedJson(response.data);
@@ -139,6 +185,16 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
     setConfig(prev => ({
       ...prev,
       scenario: preset.scenario as any
+    }));
+  };
+
+  const handleAdvancedPreset = (preset: any) => {
+    setConfig(prev => ({
+      ...prev,
+      scenario: 'custom',
+      desiredCorrect: preset.desiredCorrect,
+      forceWin: preset.forceWin,
+      targetPayout: preset.targetPayout
     }));
   };
 
@@ -226,6 +282,7 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
                   <MenuItem value="upsets">Mange overraskelser</MenuItem>
                   <MenuItem value="mixed">Balansert resultat</MenuItem>
                   <MenuItem value="random">Helt tilfeldig</MenuItem>
+                  <MenuItem value="custom">Egendefinert resultat</MenuItem>
                 </Select>
               </FormControl>
 
@@ -274,6 +331,127 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
                 />
               </Box>
             </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            {/* Advanced Controls - Accordion Style */}
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMore />}>
+                <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <EmojiEvents color="primary" />
+                  Resultat-kontroll
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Stack spacing={3}>
+                  {/* Desired correct races */}
+                  {config.scenario === 'custom' && (
+                    <>
+                      <Box>
+                        <Typography gutterBottom>
+                          Ønsket antall rette: {config.desiredCorrect || 'Auto'}
+                        </Typography>
+                        <Slider
+                          value={config.desiredCorrect || 0}
+                          onChange={(_, v) => setConfig(prev => ({ ...prev, desiredCorrect: v as number }))}
+                          min={0}
+                          max={getMaxCorrect()}
+                          marks
+                          valueLabelDisplay="auto"
+                        />
+                      </Box>
+
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={config.forceWin || false}
+                            onChange={(e) => setConfig(prev => ({ ...prev, forceWin: e.target.checked }))}
+                          />
+                        }
+                        label="Garantert gevinst"
+                      />
+
+                      {config.forceWin && (
+                        <TextField
+                          fullWidth
+                          label="Målgevinst (kr)"
+                          type="number"
+                          value={config.targetPayout || ''}
+                          onChange={(e) => setConfig(prev => ({ 
+                            ...prev, 
+                            targetPayout: e.target.value ? parseInt(e.target.value) : undefined 
+                          }))}
+                        />
+                      )}
+                    </>
+                  )}
+
+                  {/* Quick presets for advanced scenarios */}
+                  <Box>
+                    <Typography variant="caption" gutterBottom display="block">
+                      Test-scenarier
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      {advancedPresets.map(preset => (
+                        <Chip
+                          key={preset.name}
+                          label={preset.name}
+                          onClick={() => handleAdvancedPreset(preset)}
+                          size="small"
+                          variant="outlined"
+                        />
+                      ))}
+                    </Box>
+                  </Box>
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMore />}>
+                <Typography sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <AttachMoney color="primary" />
+                  Økonomiske parametre
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Stack spacing={2}>
+                  <Box sx={{ display: 'flex', gap: 2 }}>
+                    <TextField
+                      fullWidth
+                      label="Innsats (kr)"
+                      type="number"
+                      value={config.stake || ''}
+                      onChange={(e) => setConfig(prev => ({ 
+                        ...prev, 
+                        stake: e.target.value ? parseInt(e.target.value) : undefined 
+                      }))}
+                    />
+                    <TextField
+                      fullWidth
+                      label="Antall rekker"
+                      type="number"
+                      value={config.rows || ''}
+                      onChange={(e) => setConfig(prev => ({ 
+                        ...prev, 
+                        rows: e.target.value ? parseInt(e.target.value) : undefined 
+                      }))}
+                    />
+                  </Box>
+                  <TextField
+                    fullWidth
+                    label="Pool-størrelse (kr)"
+                    type="number"
+                    value={config.poolSize || ''}
+                    onChange={(e) => setConfig(prev => ({ 
+                      ...prev, 
+                      poolSize: e.target.value ? parseInt(e.target.value) : undefined 
+                    }))}
+                    helperText="Total omsetning i spillet"
+                  />
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
 
             {error && (
               <Alert severity="error">{error}</Alert>
