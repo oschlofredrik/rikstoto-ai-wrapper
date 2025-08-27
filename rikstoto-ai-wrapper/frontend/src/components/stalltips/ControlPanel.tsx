@@ -190,9 +190,15 @@ export default function ControlPanel({
             }
           }}
         >
-          <MenuItem value="gpt-4o-mini">GPT-4o Mini (Rask)</MenuItem>
-          <MenuItem value="gpt-4o">GPT-4o (Beste)</MenuItem>
-          <MenuItem value="o3-mini">O3 Mini (Reasoning)</MenuItem>
+          {/* GPT-4o Series - Most recommended */}
+          <MenuItem value="gpt-4o-mini">GPT-4o Mini (Rask ⚡)</MenuItem>
+          <MenuItem value="gpt-4o">GPT-4o (Beste 🏆)</MenuItem>
+          
+          {/* O-Series Reasoning Models - For complex analysis */}
+          <MenuItem value="o1-mini">O1 Mini (Reasoning 🧠)</MenuItem>
+          <MenuItem value="o1">O1 (Reasoning 📊)</MenuItem>
+          <MenuItem value="o3-mini">O3 Mini (Reasoning 🎯)</MenuItem>
+          <MenuItem value="o3">O3 (Avansert 🚀)</MenuItem>
         </Select>
 
         {/* Run Analysis Button */}
