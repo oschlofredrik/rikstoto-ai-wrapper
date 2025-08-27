@@ -45,6 +45,7 @@ export default function MobileResultsView() {
   const [betResult, setBetResult] = useState(DEFAULT_BET_RESULT);
   const [raceResults, setRaceResults] = useState<RaceResult[]>(DEFAULT_RACE_RESULTS);
   const [raceDataForAI, setRaceDataForAI] = useState<any>(null);
+  const [generatedJsonData, setGeneratedJsonData] = useState<any>(null); // Full JSON data for detailed views
   const [showJsonGenerator, setShowJsonGenerator] = useState(false);
   const [showPromptModal, setShowPromptModal] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -91,31 +92,41 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`);
       let newBetResult = betResult;
       let newRaceResults = raceResults;
       
-      // This depends on the structure of your generated JSON
+      // Store full JSON for detailed components
+      setGeneratedJsonData(data);
+      
+      // Extract result summary
       if (data.result) {
-        const correctRaces = data.result.correct || 6;
-        const totalRaces = 7;
+        const correctRaces = data.result.correctRaces || 6;
+        const totalRaces = data.result.totalRaces || 7;
         const totalWon = data.result.payout || Math.floor(Math.random() * 50000) + 1000;
         
         newBetResult = {
           totalWon,
           correctRaces,
           totalRaces,
-          prizeLevel: `${correctRaces} av ${totalRaces} rette`
+          prizeLevel: data.result.prizeLevel || `${correctRaces} av ${totalRaces} rette`
         };
         setBetResult(newBetResult);
       }
       
-      // Extract race results if available
-      if (data.races && Array.isArray(data.races)) {
-        newRaceResults = data.races.slice(0, 7).map((race: any, index: number) => ({
-          race: index + 1,
-          horseName: race.winner?.name || `Hest ${index + 1}`,
-          horseNumber: race.winner?.number || (index + 1),
-          value: Math.floor(Math.random() * 10000) + 100,
-          choice: Math.floor(Math.random() * 6) + 1,
-          isWinner: race.hit || Math.random() > 0.3
-        }));
+      // Extract race results from the new structure
+      if (data.raceResults && Array.isArray(data.raceResults)) {
+        newRaceResults = data.raceResults.map((race: any) => {
+          // Find the winning horse (position 1)
+          const winner = race.results?.find((h: any) => h.position === 1);
+          const marked = race.results?.filter((h: any) => h.marked === "true");
+          const isWinner = marked?.some((h: any) => h.position === 1) || false;
+          
+          return {
+            race: race.race,
+            horseName: winner?.name || `Ukjent vinner`,
+            horseNumber: winner?.horse || 0,
+            value: Math.floor(Math.random() * 10000) + 100, // Running total
+            choice: marked?.length || 1,
+            isWinner: isWinner
+          };
+        });
         setRaceResults(newRaceResults);
       }
       
@@ -264,17 +275,21 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`);
             {/* Prize calculator */}
             <Box sx={{ px: 2 }}>
               <PrizeCalculator
-                prizes={{
-                  sevenCorrect: { amount: 1234, count: 1 },
-                  sixCorrect: { amount: 1437, count: 8 },
-                  fiveCorrect: { amount: 123, count: 15 }
+                prizes={generatedJsonData?.prizes || {
+                  sevenCorrect: { amount: 1234, winners: 1 },
+                  sixCorrect: { amount: 1437, winners: 8 },
+                  fiveCorrect: { amount: 123, winners: 15 }
                 }}
+                betDetails={generatedJsonData?.betDetails}
               />
             </Box>
 
             {/* Detailed results */}
             <Box sx={{ px: 2 }}>
-              <DetailedResults results={raceResults} />
+              <DetailedResults 
+                results={raceResults} 
+                fullRaceData={generatedJsonData?.raceResults}
+              />
             </Box>
 
             {/* App download CTA */}

@@ -26,14 +26,34 @@ export interface RaceResult {
 
 interface DetailedResultsProps {
   results: RaceResult[];
+  fullRaceData?: any[]; // Full race data from generated JSON
 }
 
 /**
  * DetailedResults component - Shows full race results with numbered avatars
  * Matches Figma design nodes 12:7602 & 12:12189
  */
-export default function DetailedResults({ results }: DetailedResultsProps) {
+export default function DetailedResults({ results, fullRaceData }: DetailedResultsProps) {
   const [open, setOpen] = useState(false);
+  
+  // Use full race data if available, otherwise fall back to simple results
+  const displayData = fullRaceData ? fullRaceData.map((race, index) => {
+    const winner = race.results?.find((h: any) => h.position === 1);
+    const userPicks = race.results?.filter((h: any) => h.marked === "true");
+    const isWinner = userPicks?.some((h: any) => h.position === 1) || false;
+    
+    return {
+      race: race.race,
+      raceName: race.name || `V75-${race.race}`,
+      horseName: winner?.name || 'Ukjent vinner',
+      horseNumber: winner?.horse || 0,
+      driver: winner?.driver || '',
+      odds: winner?.odds || 0,
+      distance: race.distance || 0,
+      userPicks: userPicks?.map((h: any) => h.horse).join(', ') || '',
+      isWinner: isWinner
+    };
+  }) : results;
 
   return (
     <Box sx={{ mb: 2 }}>
@@ -62,12 +82,12 @@ export default function DetailedResults({ results }: DetailedResultsProps) {
       {/* Content */}
       <Collapse in={open}>
         <List sx={{ p: 0 }}>
-          {results.map((result, index) => (
+          {displayData.map((result: any, index) => (
             <ListItem
               key={result.race}
               sx={{
                 px: 2,
-                py: 1,
+                py: 1.5,
                 bgcolor: '#FAFAFA',
                 mb: 0.5,
                 borderRadius: '8px',
@@ -79,36 +99,67 @@ export default function DetailedResults({ results }: DetailedResultsProps) {
                   sx={{
                     width: 32,
                     height: 32,
-                    bgcolor: result.isWinner ? '#FFD700' : '#E0E0E0',
-                    color: '#333',
+                    bgcolor: result.isWinner ? '#4CAF50' : '#E0E0E0',
+                    color: result.isWinner ? 'white' : '#333',
                     fontSize: '14px',
                     fontWeight: 'bold'
                   }}
                 >
-                  {result.horseNumber}
+                  {result.horseNumber || result.race}
                 </Avatar>
               </ListItemAvatar>
               
               <ListItemText
                 primary={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {result.horseName}
-                    </Typography>
-                    {result.isWinner && (
-                      <Box sx={{ 
-                        width: 6, 
-                        height: 6, 
-                        borderRadius: '50%', 
-                        bgcolor: '#4CAF50' 
-                      }} />
-                    )}
+                  <Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        {result.raceName || `Løp ${result.race}`}
+                      </Typography>
+                      {result.distance > 0 && (
+                        <Typography variant="caption" sx={{ color: '#666' }}>
+                          {result.distance}m
+                        </Typography>
+                      )}
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        Vinner: {result.horseName}
+                      </Typography>
+                      {result.isWinner && (
+                        <Box sx={{ 
+                          bgcolor: '#4CAF50',
+                          color: 'white',
+                          px: 1,
+                          py: 0.25,
+                          borderRadius: '4px',
+                          fontSize: '10px',
+                          fontWeight: 600
+                        }}>
+                          TREFF!
+                        </Box>
+                      )}
+                    </Box>
                   </Box>
                 }
                 secondary={
-                  <Typography variant="caption" sx={{ color: '#666' }}>
-                    Verdi: {result.value.toLocaleString('nb-NO')} • Valg: {result.choice}
-                  </Typography>
+                  <Box sx={{ mt: 0.5 }}>
+                    {result.driver && (
+                      <Typography variant="caption" sx={{ color: '#666', display: 'block' }}>
+                        Kusk: {result.driver}
+                      </Typography>
+                    )}
+                    {result.odds > 0 && (
+                      <Typography variant="caption" sx={{ color: '#666', display: 'block' }}>
+                        Odds: {result.odds.toFixed(2)}
+                      </Typography>
+                    )}
+                    {result.userPicks && (
+                      <Typography variant="caption" sx={{ color: '#666', display: 'block' }}>
+                        Dine valg: {result.userPicks}
+                      </Typography>
+                    )}
+                  </Box>
                 }
               />
               
@@ -118,13 +169,13 @@ export default function DetailedResults({ results }: DetailedResultsProps) {
                   fontWeight: 'bold',
                   bgcolor: result.isWinner ? '#6B3EFF' : '#999',
                   color: 'white',
-                  px: 1,
-                  py: 0.25,
+                  px: 1.5,
+                  py: 0.5,
                   borderRadius: '12px',
                   fontSize: '12px'
                 }}
               >
-                {result.race}
+                Løp {result.race}
               </Typography>
             </ListItem>
           ))}

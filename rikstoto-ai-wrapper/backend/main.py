@@ -1195,12 +1195,64 @@ async def generate_test_json(request: JsonGeneratorRequest):
     
     # Generate result summary
     correct_races = sum(1 for r in races if r.get("hit", False))
+    
+    # Calculate prize payouts based on correct races and pool
+    total_pool = json_data["poolInfo"]["totalPool"]
+    prize_pool = total_pool * 0.65  # 65% goes to prizes
+    
+    # Generate prize breakdown
+    prizes = {}
+    if num_races == 7:  # V75
+        prizes = {
+            "sevenCorrect": {
+                "winners": random.randint(1, 5) if correct_races == 7 else 0,
+                "amount": round(prize_pool * 0.4 / max(1, random.randint(1, 5))) if correct_races == 7 else 0
+            },
+            "sixCorrect": {
+                "winners": random.randint(5, 50),
+                "amount": round(prize_pool * 0.3 / random.randint(5, 50))
+            },
+            "fiveCorrect": {
+                "winners": random.randint(100, 1000),
+                "amount": round(prize_pool * 0.3 / random.randint(100, 1000))
+            }
+        }
+    elif num_races == 6:  # V64
+        prizes = {
+            "sixCorrect": {
+                "winners": random.randint(1, 10),
+                "amount": round(prize_pool * 0.5 / max(1, random.randint(1, 10)))
+            },
+            "fiveCorrect": {
+                "winners": random.randint(20, 200),
+                "amount": round(prize_pool * 0.3 / random.randint(20, 200))
+            },
+            "fourCorrect": {
+                "winners": random.randint(500, 5000),
+                "amount": round(prize_pool * 0.2 / random.randint(500, 5000))
+            }
+        }
+    
+    # Calculate actual payout for this bet
+    payout = 0
+    if num_races == 7:
+        if correct_races == 7 and prizes["sevenCorrect"]["amount"]:
+            payout = prizes["sevenCorrect"]["amount"] * rows
+        elif correct_races == 6:
+            payout = prizes["sixCorrect"]["amount"] * rows
+        elif correct_races == 5:
+            payout = prizes["fiveCorrect"]["amount"] * rows
+    
     json_data["result"] = {
         "status": "generated",
         "correctRaces": correct_races,
         "totalRaces": num_races,
-        "prizeLevel": f"{correct_races} av {num_races} rette"
+        "prizeLevel": f"{correct_races} av {num_races} rette",
+        "payout": payout,
+        "roi": round(payout / json_data["betDetails"]["totalCost"] * 100, 2) if payout > 0 else 0
     }
+    
+    json_data["prizes"] = prizes
     
     # Add statistics
     json_data["statistics"] = {
