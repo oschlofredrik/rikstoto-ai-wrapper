@@ -32,6 +32,23 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 # Load environment variables from .env file
 load_dotenv()
 
+# LangSmith imports (optional - only if available)
+try:
+    from langsmith import traceable
+    from langsmith.wrappers import wrap_openai
+    import langsmith
+    LANGSMITH_AVAILABLE = os.getenv('LANGSMITH_TRACING', 'false').lower() == 'true'
+    if LANGSMITH_AVAILABLE:
+        print("✅ LangSmith tracing enabled")
+except ImportError:
+    LANGSMITH_AVAILABLE = False
+    print("⚠️ LangSmith not available - tracing disabled")
+    # Create dummy decorator if LangSmith not available
+    def traceable(**kwargs):
+        def decorator(func):
+            return func
+        return decorator
+
 # In-memory cache for JSON data and AI responses
 json_cache = {}  # Format: {session_id: {"json": data, "timestamp": datetime}}
 response_cache = {}  # Format: {cache_key: {"response": data, "timestamp": datetime}}
@@ -165,6 +182,11 @@ AVAILABLE_MODELS = [
     )
 ]
 
+@traceable(
+    name="azure_openai_generate",
+    run_type="llm",
+    metadata={"provider": "azure_openai", "project": "rikstoto"}
+)
 def call_azure_openai(model_name: str, prompt: str, params: Dict[str, Any]) -> Any:
     """Call Azure OpenAI API to generate text.
     
@@ -182,6 +204,10 @@ def call_azure_openai(model_name: str, prompt: str, params: Dict[str, Any]) -> A
             api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2025-01-01-preview"),
             azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
         )
+        
+        # Wrap client with LangSmith if available
+        if LANGSMITH_AVAILABLE:
+            client = wrap_openai(client)
         
         # Map model names to deployment names
         deployment_map = {
