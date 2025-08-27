@@ -93,6 +93,8 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`;
       });
 
       console.log('AI Response:', response.data); // Debug log
+      console.log('Response text length:', response.data.generated_text?.length); // Check actual length
+      console.log('Full response text:', response.data.generated_text); // Log full text to check for truncation
       
       // Ensure minimum loading time for better UX
       const startTime = Date.now();
