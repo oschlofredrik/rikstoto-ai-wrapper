@@ -83,6 +83,9 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`;
       const fullPrompt = promptToUse.replace('{{json}}', JSON.stringify(dataToAnalyze, null, 2));
       
       // Use the existing backend AI endpoint - matching working implementation from UserInterface
+      // Increase timeout for O3 models which have longer reasoning time
+      const timeoutMs = modelName.includes('o3') ? 120000 : 30000; // 2 min for O3, 30s for others
+      
       const response = await axios.post(`${API_URL}/generate`, {
         model_name: modelName,
         system_prompt: fullPrompt,
@@ -90,6 +93,8 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`;
         temperature: 0.7,
         max_length: 800,  // Increased from 500 to match backend's 600 token limit
         use_cache: !skipCache // Disable cache when regenerating
+      }, {
+        timeout: timeoutMs // Add timeout configuration
       });
 
       console.log('AI Response:', response.data); // Debug log

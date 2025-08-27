@@ -70,6 +70,10 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+# Add longer timeout for production environment (Render has 30s default)
+if os.getenv("RENDER"):
+    print("🚀 Running on Render - extended timeouts enabled for O3 models")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3001"],
@@ -318,10 +322,14 @@ def call_azure_openai(model_name: str, prompt: str, params: Dict[str, Any]) -> A
         Generated text string or error dictionary
     """
     try:
+        # O3 models need longer timeout due to reasoning process
+        timeout_seconds = 120 if "o3" in model_name else 60
+        
         client = AzureOpenAI(
             api_key=os.getenv("AZURE_OPENAI_API_KEY"),
             api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2025-01-01-preview"),
-            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+            timeout=timeout_seconds  # Add timeout for long-running requests
         )
         
         # Wrap client with LangSmith if available
@@ -354,6 +362,10 @@ def call_azure_openai(model_name: str, prompt: str, params: Dict[str, Any]) -> A
         # Will be added when API version 2025-04-01-preview is available
         # if model_name == "o3-mini" and "reasoning_effort" in params:
         #     api_params["reasoning_effort"] = params.get("reasoning_effort", "medium")
+        
+        # Log if using O3 model (which takes longer)
+        if "o3" in model_name:
+            print(f"⏱️ Using {model_name} - this may take up to 2 minutes due to reasoning process...")
         
         response = client.chat.completions.create(**api_params)
         
