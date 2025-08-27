@@ -19,6 +19,8 @@ interface RikstotoInnsiktCardProps {
   raceData?: any;
   systemPrompt?: string;
   defaultOpen?: boolean;
+  modelName?: string;
+  forceRegenerate?: boolean;
 }
 
 const API_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8000';
@@ -31,26 +33,30 @@ const API_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8
 export default function RikstotoInnsiktCard({ 
   raceData,
   systemPrompt,
-  defaultOpen = true 
+  defaultOpen = true,
+  modelName = 'gpt-4o-mini',
+  forceRegenerate = false
 }: RikstotoInnsiktCardProps) {
   const [open, setOpen] = useState(defaultOpen);
   const [aiAnalysis, setAiAnalysis] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [lastRegenerate, setLastRegenerate] = useState(forceRegenerate);
 
   useEffect(() => {
     // Re-generate analysis when component mounts or when explicitly requested
-    if (raceData) {
-      generateAIAnalysis();
+    if (raceData && (forceRegenerate !== lastRegenerate || !aiAnalysis)) {
+      generateAIAnalysis(forceRegenerate);
+      setLastRegenerate(forceRegenerate);
     }
-  }, []); // Empty dependency to only run on mount/key change
+  }, [forceRegenerate]); // Trigger on forceRegenerate change
   
   useEffect(() => {
     if (open && !aiAnalysis && raceData) {
-      generateAIAnalysis();
+      generateAIAnalysis(false);
     }
   }, [open]);
 
-  const generateAIAnalysis = async () => {
+  const generateAIAnalysis = async (skipCache = false) => {
     setLoading(true);
     // Clear any existing analysis to show loading state
     setAiAnalysis('');
@@ -80,11 +86,12 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`;
       
       // Use the existing backend AI endpoint - matching working implementation from UserInterface
       const response = await axios.post(`${API_URL}/generate`, {
-        model_name: 'gpt-4o-mini',
+        model_name: modelName,
         system_prompt: fullPrompt,
         user_prompt: "Analyser V75-resultatene",
         temperature: 0.7,
-        max_length: 500
+        max_length: 500,
+        use_cache: !skipCache // Disable cache when regenerating
       });
 
       console.log('AI Response:', response.data); // Debug log

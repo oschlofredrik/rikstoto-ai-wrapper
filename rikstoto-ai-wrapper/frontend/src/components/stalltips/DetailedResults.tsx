@@ -40,18 +40,20 @@ export default function DetailedResults({ results, fullRaceData }: DetailedResul
   const displayData = fullRaceData ? fullRaceData.map((race, index) => {
     const winner = race.results?.find((h: any) => h.position === 1);
     const userPicks = race.results?.filter((h: any) => h.marked === "true");
-    const isWinner = userPicks?.some((h: any) => h.position === 1) || false;
+    // Use hit field from backend to determine if we got this race correct
+    const isWinner = race.hit !== undefined ? race.hit : userPicks?.some((h: any) => h.position === 1) || false;
     
     return {
       race: race.race,
       raceName: race.name || `V75-${race.race}`,
-      horseName: winner?.name || 'Ukjent vinner',
-      horseNumber: winner?.horse || 0,
+      horseName: race.winnerName || winner?.name || 'Ukjent vinner', // Prefer winnerName from backend
+      horseNumber: race.winner || winner?.horse || 0, // Prefer winner number from backend
       driver: winner?.driver || '',
-      odds: winner?.odds || 0,
+      odds: winner?.odds || race.winnerOdds || 0, // Include winnerOdds from backend
       distance: race.distance || 0,
       userPicks: userPicks?.map((h: any) => h.horse).join(', ') || '',
-      isWinner: isWinner
+      isWinner: isWinner,
+      value: results[index]?.value || 0 // Get value from results array
     };
   }) : results;
 

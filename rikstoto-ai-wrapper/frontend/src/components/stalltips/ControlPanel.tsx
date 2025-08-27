@@ -7,7 +7,11 @@ import {
   Stack,
   Typography,
   Fab,
-  Zoom
+  Zoom,
+  FormControl,
+  Select,
+  MenuItem,
+  SelectChangeEvent
 } from '@mui/material';
 import {
   Casino,
@@ -24,6 +28,8 @@ interface ControlPanelProps {
   onRegenerateAnalysis: () => void;
   onReset: () => void;
   onEditPrompt: () => void;
+  onModelChange?: (model: string) => void;
+  selectedModel?: string;
   isGenerating?: boolean;
   isAnalyzing?: boolean;
 }
@@ -37,9 +43,16 @@ export default function ControlPanel({
   onRegenerateAnalysis,
   onReset,
   onEditPrompt,
+  onModelChange,
+  selectedModel = 'gpt-4o-mini',
   isGenerating = false,
   isAnalyzing = false
 }: ControlPanelProps) {
+  const handleModelChange = (event: SelectChangeEvent<string>) => {
+    if (onModelChange) {
+      onModelChange(event.target.value);
+    }
+  };
   return (
     <Paper
       elevation={8}
@@ -176,6 +189,28 @@ export default function ControlPanel({
           </Fab>
         </Tooltip>
       </Stack>
+
+      {/* Model Selector */}
+      <FormControl size="small" sx={{ mt: 2, width: '100%' }}>
+        <Typography variant="caption" sx={{ mb: 0.5, color: '#666' }}>
+          AI Model
+        </Typography>
+        <Select
+          value={selectedModel}
+          onChange={handleModelChange}
+          sx={{
+            fontSize: '12px',
+            '& .MuiSelect-select': {
+              py: 0.5,
+              px: 1
+            }
+          }}
+        >
+          <MenuItem value="gpt-4o-mini">GPT-4o Mini (Rask)</MenuItem>
+          <MenuItem value="gpt-4o">GPT-4o (Beste)</MenuItem>
+          <MenuItem value="o3-mini">O3 Mini (Reasoning)</MenuItem>
+        </Select>
+      </FormControl>
 
       <Stack 
         direction="row" 

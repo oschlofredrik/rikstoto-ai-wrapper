@@ -54,6 +54,10 @@ export default function MobileResultsView() {
   const [aiAnalysisKey, setAiAnalysisKey] = useState(0); // Force re-render of AI component
   const [trackName, setTrackName] = useState("Klosterskogen");
   const [raceDateTime, setRaceDateTime] = useState("lørdag 16:30");
+  const [forceRegenerate, setForceRegenerate] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<string>(() => {
+    return localStorage.getItem('rikstoto_selected_model') || 'gpt-4o-mini';
+  });
   
   // Load system prompt from localStorage or use default
   const [systemPrompt, setSystemPrompt] = useState<string>(() => {
@@ -124,18 +128,26 @@ export default function MobileResultsView() {
       
       // Extract race results from the new structure
       if (data.raceResults && Array.isArray(data.raceResults)) {
-        newRaceResults = data.raceResults.map((race: any) => {
+        let runningTotal = 0;
+        newRaceResults = data.raceResults.map((race: any, index: number) => {
           // Find the winning horse (position 1)
           const winner = race.results?.find((h: any) => h.position === 1);
           const marked = race.results?.filter((h: any) => h.marked === "true");
-          // Use the hit field from backend if available, otherwise calculate
+          // Use the hit field from backend - this tells us if we got this race correct
           const isWinner = race.hit !== undefined ? race.hit : marked?.some((h: any) => h.position === 1) || false;
+          
+          // Calculate cumulative value only for correct races
+          if (isWinner && data.result?.payout) {
+            // Distribute the total payout across winning races
+            const payoutPerWin = Math.floor(data.result.payout / (data.result.correctRaces || 1));
+            runningTotal += payoutPerWin;
+          }
           
           return {
             race: race.race,
-            horseName: winner?.name || `Ukjent vinner`,
-            horseNumber: winner?.horse || 0,
-            value: Math.floor(Math.random() * 10000) + 100, // Running total
+            horseName: race.winnerName || winner?.name || `Ukjent vinner`,
+            horseNumber: winner?.horse || race.winner || 0,
+            value: runningTotal, // Cumulative payout value
             choice: marked?.length || 1,
             isWinner: isWinner
           };
@@ -161,8 +173,8 @@ export default function MobileResultsView() {
   // Regenerate AI analysis
   const handleRegenerateAnalysis = () => {
     setIsAnalyzing(true);
-    // Update the key to force RikstotoInnsiktCard to re-render and fetch new analysis
-    setAiAnalysisKey(prev => prev + 1);
+    // Toggle forceRegenerate to trigger new analysis without cache
+    setForceRegenerate(prev => !prev);
     // The RikstotoInnsiktCard component will handle the actual API call
     setTimeout(() => setIsAnalyzing(false), 2000); // Estimate 2 seconds for analysis
   };
@@ -205,6 +217,14 @@ export default function MobileResultsView() {
     setAiAnalysisKey(prev => prev + 1);
   };
 
+  const handleModelChange = (model: string) => {
+    setSelectedModel(model);
+    // Save to localStorage for persistence
+    localStorage.setItem('rikstoto_selected_model', model);
+    // Force re-analysis with new model
+    setForceRegenerate(prev => !prev);
+  };
+
   // Initialize race data for AI on mount
   React.useEffect(() => {
     setRaceDataForAI(generateRaceDataForAI(betResult, raceResults));
@@ -218,6 +238,8 @@ export default function MobileResultsView() {
         onRegenerateAnalysis={handleRegenerateAnalysis}
         onReset={handleReset}
         onEditPrompt={handleEditPrompt}
+        onModelChange={handleModelChange}
+        selectedModel={selectedModel}
         isGenerating={isGenerating}
         isAnalyzing={isAnalyzing}
       />
@@ -293,6 +315,8 @@ export default function MobileResultsView() {
                 raceData={raceDataForAI}
                 systemPrompt={systemPrompt}
                 defaultOpen={true}
+                modelName={selectedModel}
+                forceRegenerate={forceRegenerate}
               />
             </Box>
 
