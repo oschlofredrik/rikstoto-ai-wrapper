@@ -117,13 +117,13 @@ class ModelInfo(BaseModel):
 # Default prompts for each model (optimized for their strengths based on 2024/2025 research)
 MODEL_DEFAULTS = {
     "gpt-4o": {
-        "system_prompt": "Du er en ekspert på Rikstoto og hesteveddeløp. Analyser følgende bongdata og gi en detaljert forklaring på norsk:\n{{json}}\n\nForklar bongen, odds, og potensielle gevinster på en pedagogisk måte.",
+        "system_prompt": "Du er en ekspert på Rikstoto og hesteveddeløp. Analyser følgende bongdata og gi en detaljert forklaring på norsk:\n{{json}}\n\nForklar bongen med fokus på:\n- Valgte hester (marked=true) vs resultater (position)\n- Innsatsfordeling (percentageBet viser % av totalomsetning per hest)\n- Odds og hvordan de relaterer til innsatsfordeling\n- Potensielle gevinster basert på betResult\nVær pedagogisk og forklar sammenhenger.",
         "temperature": 0.7,  # Balanced for analysis with creativity (OpenAI recommendation)
         "max_length": 1000,  # Increased for comprehensive analysis
         "top_p": 1.0  # Use default, let temperature control randomness
     },
     "gpt-4o-mini": {
-        "system_prompt": "Analyser denne Rikstoto-bongen kort og konsist:\n{{json}}\n\nGi en rask oppsummering av: 1) Type spill, 2) Valgte hester, 3) Mulig gevinst",
+        "system_prompt": "Analyser denne Rikstoto-bongen kort og konsist:\n{{json}}\n\nGi en rask oppsummering av: 1) Type spill, 2) Valgte hester (marked=true), 3) Innsatsfordeling (percentageBet/amountBet), 4) Odds og mulig gevinst",
         "temperature": 0.5,  # Lower for consistent, cost-effective responses
         "max_length": 400,  # Keep short for efficiency
         "top_p": 1.0  # Default works well for simpler models
@@ -751,6 +751,15 @@ async def generate_text(request: GenerationRequest) -> Dict[str, Any]:
                 "top_p": request.top_p,
                 "top_k": request.top_k
             }
+        
+        # Debug: Log what's being sent to verify full JSON is included
+        print(f"\n🔍 DEBUG: Sending to {model_name}")
+        print(f"📏 Prompt length: {len(prompt)} characters")
+        print(f"📊 JSON indicators in prompt:")
+        print(f"  - Contains 'percentageBet': {'percentageBet' in prompt}")
+        print(f"  - Contains 'amountBet': {'amountBet' in prompt}")
+        print(f"  - Contains 'raceResults': {'raceResults' in prompt}")
+        print(f"  - Contains 'betResult': {'betResult' in prompt}")
         
         # Route to appropriate API based on model
         if model_name in ["gpt-4o", "gpt-4o-mini", "o3-mini"]:
