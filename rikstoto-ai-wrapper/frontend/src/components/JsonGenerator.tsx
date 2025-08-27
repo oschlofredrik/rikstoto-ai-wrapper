@@ -308,7 +308,7 @@ export default function JsonGenerator({ open, onClose, onGenerated, apiUrl }: Js
                 size="small"
                 startIcon={copied ? <Check /> : <ContentCopy />}
                 onClick={handleCopyJson}
-                color={copied ? 'success' : 'default'}
+                color={copied ? 'success' : 'inherit'}
               >
                 {copied ? 'Kopiert!' : 'Kopier'}
               </Button>
