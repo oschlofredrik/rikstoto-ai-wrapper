@@ -60,37 +60,28 @@ export default function RikstotoInnsiktCard({
         analysis: "Favorittene dominerte, men en outsider på løp 7 ødela for 7 rette."
       };
       
-      // Add timestamp to ensure unique request
-      const timestampedData = {
-        ...dataToAnalyze,
-        requestTime: new Date().toISOString(),
-        uniqueId: Math.random()
-      };
+      // Create system prompt with {{json}} placeholder - matching working implementation
+      const systemPrompt = `Du er en ekspert på Rikstoto og hesteveddeløp. Analyser følgende V75-resultater og gi innsikt om hva som gikk bra og hva som kunne vært bedre.
+
+{{json}}
+
+Fokuser på:
+1. Hvorfor vinnerne vant (form, odds-bevegelse, etc)
+2. Hva spilleren gjorde riktig
+3. Tips for fremtidige spill
+
+Gi et kort og konkret svar på norsk.`;
       
-      // Create system prompt with JSON data embedded
-      const systemPrompt = `Du er en ekspert på Rikstoto og hesteveddeløp. Analyser følgende V75-resultater og gi innsikt om hva som gikk bra og hva som kunne vært bedre. 
+      // Replace {{json}} with actual data - exactly like UserInterface does it
+      const fullPrompt = systemPrompt.replace('{{json}}', JSON.stringify(dataToAnalyze, null, 2));
       
-      Data: ${JSON.stringify(timestampedData, null, 2)}
-      
-      Fokuser på:
-      1. Hvorfor vinnerne vant (form, odds-bevegelse, etc)
-      2. Hva spilleren gjorde riktig  
-      3. Tips for fremtidige spill
-      
-      Gi et kort og konkret svar på norsk. Bruk BARE informasjonen fra dataene over.`;
-      
-      // Use the existing backend AI endpoint - matching working implementation
+      // Use the existing backend AI endpoint - matching working implementation from UserInterface
       const response = await axios.post(`${API_URL}/generate`, {
         model_name: 'gpt-4o-mini',
-        system_prompt: systemPrompt,
-        user_prompt: "Analyser disse V75-resultatene basert på dataene jeg ga deg",
-        temperature: 0.8,  // Slightly higher for more variation
-        max_length: 500,
-        // Ensure no caching
-        headers: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        }
+        system_prompt: fullPrompt,
+        user_prompt: "Analyser V75-resultatene",
+        temperature: 0.7,
+        max_length: 500
       });
 
       console.log('AI Response:', response.data); // Debug log
