@@ -61,8 +61,9 @@ export default function ControlPanel({
       elevation={8}
       sx={{
         position: 'fixed',
-        bottom: 32,
+        top: '50%',
         left: 32,
+        transform: 'translateY(-50%)',
         p: 2,
         borderRadius: '16px',
         bgcolor: 'rgba(255, 255, 255, 0.98)',
