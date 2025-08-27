@@ -357,7 +357,16 @@ def call_azure_openai(model_name: str, prompt: str, params: Dict[str, Any]) -> A
         
         response = client.chat.completions.create(**api_params)
         
-        return response.choices[0].message.content
+        # Log response details for debugging
+        result_text = response.choices[0].message.content
+        print(f"✅ Azure OpenAI response length: {len(result_text)} chars")
+        
+        # Check if response seems truncated (ends mid-sentence)
+        if result_text and not result_text.rstrip().endswith(('.', '!', '?', '"', '»')):
+            print(f"⚠️ Response may be truncated - doesn't end with punctuation")
+            print(f"⚠️ Last 50 chars: ...{result_text[-50:]}")
+        
+        return result_text
     except Exception as e:
         error_msg = str(e)
         # Sanitize error message to avoid exposing sensitive data
@@ -893,13 +902,21 @@ async def generate_text(request: GenerationRequest) -> Dict[str, Any]:
             else:
                 raise HTTPException(status_code=400, detail=result["error"])
         
+        # Log the result length for debugging
+        if isinstance(result, str):
+            print(f"📐 Final response length before sending: {len(result)} chars")
+            if len(result) > 0:
+                print(f"📐 First 50 chars: {result[:50]}...")
+                print(f"📐 Last 50 chars: ...{result[-50:]}")
+        
         response_data = {
             "generated_text": result,
             "model_used": request.model_name,
             "prompt_length": len(prompt),
             "parameters": params,
             "api_mode": True,
-            "from_cache": False
+            "from_cache": False,
+            "response_length": len(result) if isinstance(result, str) else 0  # Add length to response
         }
         
         # Cache the successful response
