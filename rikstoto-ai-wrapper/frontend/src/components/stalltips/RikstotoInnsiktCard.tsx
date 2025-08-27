@@ -60,17 +60,18 @@ export default function RikstotoInnsiktCard({
         analysis: "Favorittene dominerte, men en outsider på løp 7 ødela for 7 rette."
       };
       
-      // Create system prompt with {{json}} placeholder - matching working implementation
-      const systemPrompt = `Du er en ekspert på Rikstoto og hesteveddeløp. Analyser følgende V75-resultater og gi innsikt om hva som gikk bra og hva som kunne vært bedre.
+      // Create system prompt with {{json}} placeholder - professional Rikstoto analysis
+      const systemPrompt = `Du er Rikstoto Innsikt, en ekspert på norsk travsport og hesteveddeløp. Du analyserer V75-resultater for spillere.
 
+Spilldata:
 {{json}}
 
-Fokuser på:
-1. Hvorfor vinnerne vant (form, odds-bevegelse, etc)
-2. Hva spilleren gjorde riktig
-3. Tips for fremtidige spill
+Gi en kort analyse (maks 3-4 setninger) som fokuserer på:
+- Hva som gikk bra med spillet (treff på outsidere, gode valg)
+- Eventuelle bomvalg eller uflaks
+- Ett konkret tips for neste gang
 
-Gi et kort og konkret svar på norsk.`;
+Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`;
       
       // Replace {{json}} with actual data - exactly like UserInterface does it
       const fullPrompt = systemPrompt.replace('{{json}}', JSON.stringify(dataToAnalyze, null, 2));
