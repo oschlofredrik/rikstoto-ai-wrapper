@@ -50,38 +50,56 @@ export default function RikstotoInnsiktCard({
 
   const generateAIAnalysis = async () => {
     setLoading(true);
+    // Clear any existing analysis to show loading state
+    setAiAnalysis('');
+    
     try {
-      // Prepare the race data
+      // Prepare the race data with timestamp to avoid caching
       const dataToAnalyze = raceData || {
         results: "6 av 7 rette, vinnere: Tangen Bork, Chantecler, Alm Kevin, etc.",
         analysis: "Favorittene dominerte, men en outsider på løp 7 ødela for 7 rette."
       };
       
+      // Add timestamp to ensure unique request
+      const timestampedData = {
+        ...dataToAnalyze,
+        requestTime: new Date().toISOString(),
+        uniqueId: Math.random()
+      };
+      
       // Create system prompt with JSON data embedded
       const systemPrompt = `Du er en ekspert på Rikstoto og hesteveddeløp. Analyser følgende V75-resultater og gi innsikt om hva som gikk bra og hva som kunne vært bedre. 
       
-      Data: ${JSON.stringify(dataToAnalyze, null, 2)}
+      Data: ${JSON.stringify(timestampedData, null, 2)}
       
       Fokuser på:
       1. Hvorfor vinnerne vant (form, odds-bevegelse, etc)
-      2. Hva spilleren gjorde riktig
+      2. Hva spilleren gjorde riktig  
       3. Tips for fremtidige spill
       
-      Gi et kort og konkret svar på norsk.`;
+      Gi et kort og konkret svar på norsk. Bruk BARE informasjonen fra dataene over.`;
       
       // Use the existing backend AI endpoint - matching working implementation
       const response = await axios.post(`${API_URL}/generate`, {
         model_name: 'gpt-4o-mini',
         system_prompt: systemPrompt,
-        user_prompt: "Analyser disse V75-resultatene",
-        temperature: 0.7,
-        max_length: 500
+        user_prompt: "Analyser disse V75-resultatene basert på dataene jeg ga deg",
+        temperature: 0.8,  // Slightly higher for more variation
+        max_length: 500,
+        // Ensure no caching
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
       });
 
+      console.log('AI Response:', response.data); // Debug log
+      
       if (response.data.generated_text) {
         setAiAnalysis(response.data.generated_text);
       } else {
         // Fallback text if AI is not available
+        console.log('No generated_text in response, using default');
         setAiAnalysis(getDefaultAnalysis());
       }
     } catch (error) {

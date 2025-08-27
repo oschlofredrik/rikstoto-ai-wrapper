@@ -75,23 +75,27 @@ export default function MobileResultsView() {
       const data = JSON.parse(jsonString);
       
       // Extract bet results from generated data
+      let newBetResult = betResult;
+      let newRaceResults = raceResults;
+      
       // This depends on the structure of your generated JSON
       if (data.result) {
         const correctRaces = data.result.correct || 6;
         const totalRaces = 7;
         const totalWon = data.result.payout || Math.floor(Math.random() * 50000) + 1000;
         
-        setBetResult({
+        newBetResult = {
           totalWon,
           correctRaces,
           totalRaces,
           prizeLevel: `${correctRaces} av ${totalRaces} rette`
-        });
+        };
+        setBetResult(newBetResult);
       }
       
       // Extract race results if available
       if (data.races && Array.isArray(data.races)) {
-        const newRaceResults: RaceResult[] = data.races.slice(0, 7).map((race: any, index: number) => ({
+        newRaceResults = data.races.slice(0, 7).map((race: any, index: number) => ({
           race: index + 1,
           horseName: race.winner?.name || `Hest ${index + 1}`,
           horseNumber: race.winner?.number || (index + 1),
@@ -102,11 +106,9 @@ export default function MobileResultsView() {
         setRaceResults(newRaceResults);
       }
       
-      // Update AI race data
-      const newRaceData = {
-        ...generateRaceDataForAI(betResult, raceResults),
-        generatedJson: data // Include full generated data
-      };
+      // Update AI race data with the DISPLAY data, not the full generated JSON
+      // This ensures AI analyzes what's shown in the UI
+      const newRaceData = generateRaceDataForAI(newBetResult, newRaceResults);
       setRaceDataForAI(newRaceData);
       
       // Force AI component to re-analyze
