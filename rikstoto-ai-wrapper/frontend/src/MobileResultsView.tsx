@@ -51,7 +51,6 @@ export default function MobileResultsView() {
   const [showPromptModal, setShowPromptModal] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [aiAnalysisKey, setAiAnalysisKey] = useState(0); // Force re-render of AI component
   const [trackName, setTrackName] = useState("Klosterskogen");
   const [raceDateTime, setRaceDateTime] = useState("lørdag 16:30");
   const [forceRegenerate, setForceRegenerate] = useState(false);
@@ -160,8 +159,6 @@ export default function MobileResultsView() {
       const newRaceData = generateRaceDataForAI(newBetResult, newRaceResults);
       setRaceDataForAI(newRaceData);
       
-      // Don't automatically trigger AI analysis - user will do it manually
-      
     } catch (error) {
       console.error('Error processing generated JSON:', error);
     } finally {
@@ -172,12 +169,10 @@ export default function MobileResultsView() {
   // Regenerate AI analysis
   const handleRegenerateAnalysis = () => {
     setIsAnalyzing(true);
-    // Force AI component to re-analyze with new key
-    setAiAnalysisKey(prev => prev + 1);
     // Toggle forceRegenerate to trigger new analysis without cache
     setForceRegenerate(prev => !prev);
     // The RikstotoInnsiktCard component will handle the actual API call
-    setTimeout(() => setIsAnalyzing(false), 2000); // Estimate 2 seconds for analysis
+    setTimeout(() => setIsAnalyzing(false), 3000); // Estimate 3 seconds for analysis
   };
 
   // Reset to default data
@@ -310,7 +305,6 @@ export default function MobileResultsView() {
             {/* AI-powered Rikstoto Innsikt section - THE KEY DIFFERENTIATOR */}
             <Box sx={{ px: 2 }}>
               <RikstotoInnsiktCard 
-                key={aiAnalysisKey} // Force re-render when key changes
                 raceData={raceDataForAI}
                 systemPrompt={systemPrompt}
                 defaultOpen={false}
