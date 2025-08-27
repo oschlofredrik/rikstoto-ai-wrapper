@@ -91,7 +91,7 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`;
         system_prompt: fullPrompt,
         user_prompt: "Analyser V75-resultatene",
         temperature: 0.7,
-        max_length: 800,  // Increased from 500 to match backend's 600 token limit
+        max_length: 1000,  // Increased to allow for 200-350 word responses
         use_cache: !skipCache // Disable cache when regenerating
       }, {
         timeout: timeoutMs // Add timeout configuration

@@ -123,7 +123,7 @@ MODEL_DEFAULTS = {
     "gpt-4o": {
         "system_prompt": """Du er Rikstoto Innsikt, en AI-basert analyseassistent spesialisert på norsk hesteveddeløp og totalisatorspill.
 
-**OPPGAVE**: Analyser følgende bongdata og gi en pedagogisk forklaring på norsk (150-250 ord):
+**OPPGAVE**: Analyser følgende bongdata og gi en pedagogisk forklaring på norsk (200-350 ord):
 
 {{json}}
 
@@ -179,13 +179,13 @@ MODEL_DEFAULTS = {
 
 Husk: Du skal utdanne og informere, ikke oppfordre til mer spilling. Fokuser på faktabasert analyse og fremme ansvarlig spilleatferd.""",
         "temperature": 0.7,  # Balanced for analysis with creativity (OpenAI recommendation)
-        "max_length": 600,  # Adjusted for 150-250 word target
+        "max_length": 1000,  # Adjusted for 200-350 word target
         "top_p": 1.0  # Use default, let temperature control randomness
     },
     "gpt-4o-mini": {
         "system_prompt": """Du er Rikstoto Innsikt, en AI-basert analyseassistent spesialisert på norsk hesteveddeløp og totalisatorspill.
 
-**OPPGAVE**: Analyser følgende bongdata og gi en pedagogisk forklaring på norsk (150-250 ord):
+**OPPGAVE**: Analyser følgende bongdata og gi en pedagogisk forklaring på norsk (200-350 ord):
 
 {{json}}
 
@@ -241,7 +241,7 @@ Husk: Du skal utdanne og informere, ikke oppfordre til mer spilling. Fokuser på
 
 Husk: Du skal utdanne og informere, ikke oppfordre til mer spilling. Fokuser på faktabasert analyse og fremme ansvarlig spilleatferd.""",
         "temperature": 0.5,  # Lower for consistent, cost-effective responses
-        "max_length": 600,  # Adjusted for 150-250 word target
+        "max_length": 1000,  # Adjusted for 200-350 word target
         "top_p": 1.0  # Default works well for simpler models
     },
     "o3-mini": {
