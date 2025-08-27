@@ -31,7 +31,7 @@ export default function CelebrationCard({
         mx: 2,
         mb: 2,
         p: 4,
-        bgcolor: '#FFF155', // Yellow from Figma
+        bgcolor: amount > 0 ? '#FFF155' : '#F5F5F5', // Yellow for win, gray for no win
         borderRadius: '12px',
         position: 'relative',
         overflow: 'hidden',
@@ -44,50 +44,53 @@ export default function CelebrationCard({
         }
       }}
     >
-      {/* Confetti Pattern from Figma */}
-      <Box sx={{
-        position: 'absolute',
-        top: '-40px',
-        left: '-80px',
-        right: '-80px',
-        height: '300px',
-        backgroundImage: `url(${confettiBg})`,
-        backgroundSize: 'contain',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center top',
-        opacity: 0.8,
-        pointerEvents: 'none',
-        animation: showAnimation ? 'confettiFloat 3s ease-in-out infinite' : 'none',
-        '@keyframes confettiFloat': {
-          '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
-          '50%': { transform: 'translateY(-5px) rotate(1deg)' }
-        }
-      }} />
+      {/* Confetti Pattern from Figma - only show on win */}
+      {amount > 0 && (
+        <Box sx={{
+          position: 'absolute',
+          top: '-40px',
+          left: '-80px',
+          right: '-80px',
+          height: '300px',
+          backgroundImage: `url(${confettiBg})`,
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center top',
+          opacity: 0.8,
+          pointerEvents: 'none',
+          animation: showAnimation ? 'confettiFloat 3s ease-in-out infinite' : 'none',
+          '@keyframes confettiFloat': {
+            '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+            '50%': { transform: 'translateY(-5px) rotate(1deg)' }
+          }
+        }} />
+      )}
 
-
-      {/* Horse Graphic from Figma */}
-      <Box sx={{
-        position: 'absolute',
-        left: '-20px',
-        bottom: '-30px',
-        width: '200px',
-        height: '200px',
-        backgroundImage: `url(${horseGraphic})`,
-        backgroundSize: 'contain',
-        backgroundRepeat: 'no-repeat',
-        opacity: 0.8,
-        transform: 'rotate(-5deg)',
-        animation: showAnimation ? 'horseJump 2s ease-out' : 'none',
-        '@keyframes horseJump': {
-          '0%': { transform: 'translateY(50px) rotate(-5deg)' },
-          '50%': { transform: 'translateY(-10px) rotate(0deg)' },
-          '100%': { transform: 'translateY(0) rotate(-5deg)' }
-        }
-      }} />
+      {/* Horse Graphic from Figma - only show on win */}
+      {amount > 0 && (
+        <Box sx={{
+          position: 'absolute',
+          left: '-20px',
+          bottom: '-30px',
+          width: '200px',
+          height: '200px',
+          backgroundImage: `url(${horseGraphic})`,
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.8,
+          transform: 'rotate(-5deg)',
+          animation: showAnimation ? 'horseJump 2s ease-out' : 'none',
+          '@keyframes horseJump': {
+            '0%': { transform: 'translateY(50px) rotate(-5deg)' },
+            '50%': { transform: 'translateY(-10px) rotate(0deg)' },
+            '100%': { transform: 'translateY(0) rotate(-5deg)' }
+          }
+        }} />
+      )}
 
       {/* Content */}
       <Stack spacing={2} sx={{ position: 'relative', textAlign: 'center', zIndex: 1 }}>
-        {/* Congratulations message */}
+        {/* Congratulations or result message */}
         <Typography 
           variant="body1" 
           sx={{ 
@@ -101,17 +104,20 @@ export default function CelebrationCard({
             }
           }}
         >
-          Gratulerer, du fikk {correctRaces} av {totalRaces} rette!
+          {amount > 0 
+            ? `Gratulerer, du fikk ${correctRaces} av ${totalRaces} rette!`
+            : `Du fikk ${correctRaces} av ${totalRaces} rette`
+          }
         </Typography>
         
         {/* Win amount */}
         <Typography 
           variant="h2" 
           sx={{ 
-            color: '#6B3EFF', // Exact purple from Figma
+            color: amount > 0 ? '#6B3EFF' : '#999', // Purple for win, gray for no win
             fontWeight: 800,
-            fontSize: '52px',
-            textShadow: '0 2px 8px rgba(107, 62, 255, 0.15)',
+            fontSize: amount > 0 ? '52px' : '42px',
+            textShadow: amount > 0 ? '0 2px 8px rgba(107, 62, 255, 0.15)' : 'none',
             letterSpacing: '-0.03em',
             lineHeight: 1,
             animation: showAnimation ? 'fadeInUp 0.8s ease-out' : 'none',
@@ -121,7 +127,10 @@ export default function CelebrationCard({
             }
           }}
         >
-          +{amount.toLocaleString('nb-NO').replace(',', ' ')} kr
+          {amount > 0 
+            ? `+${amount.toLocaleString('nb-NO').replace(',', ' ')} kr`
+            : 'Ingen gevinst'
+          }
         </Typography>
       </Stack>
     </Box>

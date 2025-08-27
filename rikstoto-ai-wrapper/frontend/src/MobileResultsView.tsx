@@ -97,9 +97,10 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`);
       
       // Extract result summary
       if (data.result) {
-        const correctRaces = data.result.correctRaces || 6;
+        const correctRaces = data.result.correctRaces || 0;
         const totalRaces = data.result.totalRaces || 7;
-        const totalWon = data.result.payout || Math.floor(Math.random() * 50000) + 1000;
+        // Use actual payout from backend - it will be 0 for less than 5 correct
+        const totalWon = data.result.payout || 0;
         
         newBetResult = {
           totalWon,
@@ -258,7 +259,13 @@ Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`);
                 Resultat
               </Typography>
               <Typography variant="body1" sx={{ mb: 2 }}>
-                Du fikk <strong>{betResult.correctRaces} av {betResult.totalRaces} rette</strong> og vinner <strong>{betResult.totalWon.toLocaleString('nb-NO')} kr!</strong>
+                Du fikk <strong>{betResult.correctRaces} av {betResult.totalRaces} rette</strong>
+                {betResult.totalWon > 0 && (
+                  <> og vinner <strong>{betResult.totalWon.toLocaleString('nb-NO')} kr!</strong></>
+                )}
+                {betResult.totalWon === 0 && betResult.correctRaces < 5 && (
+                  <> - minimum 5 rette kreves for gevinst i V75.</>
+                )}
               </Typography>
             </Box>
 

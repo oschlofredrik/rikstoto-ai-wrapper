@@ -1194,7 +1194,8 @@ async def generate_test_json(request: JsonGeneratorRequest):
     json_data["raceResults"] = races
     
     # Generate result summary
-    correct_races = sum(1 for r in races if r.get("hit", False))
+    # Ensure correct_races never exceeds the actual number of races
+    correct_races = min(sum(1 for r in races if r.get("hit", False)), num_races)
     
     # Calculate prize payouts based on correct races and pool
     total_pool = json_data["poolInfo"]["totalPool"]
@@ -1232,16 +1233,55 @@ async def generate_test_json(request: JsonGeneratorRequest):
                 "amount": round(prize_pool * 0.2 / random.randint(500, 5000))
             }
         }
+    elif num_races == 2:  # DD (Dagens Dobbel)
+        prizes = {
+            "twoCorrect": {
+                "winners": random.randint(10, 100) if correct_races == 2 else 0,
+                "amount": round(prize_pool / max(1, random.randint(10, 100))) if correct_races == 2 else 0
+            }
+        }
+    else:  # V5
+        prizes = {
+            "fiveCorrect": {
+                "winners": random.randint(5, 50) if correct_races == 5 else 0,
+                "amount": round(prize_pool * 0.5 / max(1, random.randint(5, 50))) if correct_races == 5 else 0
+            },
+            "fourCorrect": {
+                "winners": random.randint(50, 500),
+                "amount": round(prize_pool * 0.3 / random.randint(50, 500))
+            },
+            "threeCorrect": {
+                "winners": random.randint(500, 5000),
+                "amount": round(prize_pool * 0.2 / random.randint(500, 5000))
+            }
+        }
     
     # Calculate actual payout for this bet
     payout = 0
-    if num_races == 7:
+    if num_races == 7:  # V75
         if correct_races == 7 and prizes["sevenCorrect"]["amount"]:
             payout = prizes["sevenCorrect"]["amount"] * rows
         elif correct_races == 6:
             payout = prizes["sixCorrect"]["amount"] * rows
         elif correct_races == 5:
             payout = prizes["fiveCorrect"]["amount"] * rows
+    elif num_races == 6:  # V64
+        if correct_races == 6 and prizes["sixCorrect"]["amount"]:
+            payout = prizes["sixCorrect"]["amount"] * rows
+        elif correct_races == 5:
+            payout = prizes["fiveCorrect"]["amount"] * rows
+        elif correct_races == 4:
+            payout = prizes["fourCorrect"]["amount"] * rows
+    elif num_races == 5:  # V5
+        if correct_races == 5 and prizes["fiveCorrect"]["amount"]:
+            payout = prizes["fiveCorrect"]["amount"] * rows
+        elif correct_races == 4:
+            payout = prizes["fourCorrect"]["amount"] * rows
+        elif correct_races == 3:
+            payout = prizes["threeCorrect"]["amount"] * rows
+    elif num_races == 2:  # DD
+        if correct_races == 2 and prizes["twoCorrect"]["amount"]:
+            payout = prizes["twoCorrect"]["amount"] * rows
     
     json_data["result"] = {
         "status": "generated",
