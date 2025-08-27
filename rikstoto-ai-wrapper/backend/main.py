@@ -39,9 +39,16 @@ try:
     import langsmith
     LANGSMITH_AVAILABLE = os.getenv('LANGSMITH_TRACING', 'false').lower() == 'true'
     if LANGSMITH_AVAILABLE:
-        print("✅ LangSmith tracing enabled")
+        print(f"✅ LangSmith tracing enabled")
+        print(f"   Project: {os.getenv('LANGSMITH_PROJECT', 'Not set')}")
+        print(f"   Endpoint: {os.getenv('LANGSMITH_ENDPOINT', 'Not set')}")
+        print(f"   API Key: {'Set' if os.getenv('LANGSMITH_API_KEY') else 'Not set'}")
+        print(f"   Environment: {os.getenv('ENVIRONMENT', 'Not set')}")
+    else:
+        print(f"⚠️ LangSmith tracing disabled (LANGSMITH_TRACING={os.getenv('LANGSMITH_TRACING', 'not set')})")
 except ImportError:
     LANGSMITH_AVAILABLE = False
+    print("⚠️ LangSmith not installed - tracing disabled")
     print("⚠️ LangSmith not available - tracing disabled")
     # Create dummy decorator if LangSmith not available
     def traceable(**kwargs):
