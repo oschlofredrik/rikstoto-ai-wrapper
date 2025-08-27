@@ -45,6 +45,7 @@ export default function RikstotoInnsiktCard({
   useEffect(() => {
     // Only generate analysis when explicitly requested via forceRegenerate
     if (raceData && forceRegenerate !== lastRegenerate) {
+      setOpen(true); // Automatically open the card when generating analysis
       generateAIAnalysis(true); // Always skip cache when manually triggered
       setLastRegenerate(forceRegenerate);
     }
