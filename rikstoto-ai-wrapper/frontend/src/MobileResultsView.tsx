@@ -64,7 +64,7 @@ export default function MobileResultsView() {
     return savedPrompt || DEFAULT_SYSTEM_PROMPT;
   });
 
-  // Generate initial race data for AI
+  // Keep this for backwards compatibility with UI components that need simplified data
   const generateRaceDataForAI = useCallback((betRes: any, raceRes: RaceResult[]) => {
     return {
       betResult: betRes,
@@ -226,23 +226,16 @@ export default function MobileResultsView() {
     // Don't automatically trigger AI analysis when model changes
   };
 
-  // Initialize race data for AI on mount
+  // Update AI data when we have full JSON, use simplified for initial state
   React.useEffect(() => {
-    // Use generatedJsonData if available (has full data), otherwise use simplified version
     if (generatedJsonData) {
+      console.log('✅ Setting FULL JSON for AI analysis:', generatedJsonData);
       setRaceDataForAI(generatedJsonData);
     } else {
-      // For initial load, create a more complete structure
-      setRaceDataForAI({
-        betResult: betResult,
-        raceResults: raceResults,
-        totalStake: 198,
-        poolSize: 8900000,
-        numberOfPlayers: 45892,
-        timestamp: new Date().toISOString()
-      });
+      console.log('⚠️ Using simplified data (no full JSON generated yet)');
+      setRaceDataForAI(generateRaceDataForAI(betResult, raceResults));
     }
-  }, [generatedJsonData]); // Re-run when JSON is generated
+  }, [generatedJsonData, betResult, raceResults, generateRaceDataForAI]);
 
   return (
     <>
