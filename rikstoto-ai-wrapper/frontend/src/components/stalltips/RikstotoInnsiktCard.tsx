@@ -79,8 +79,10 @@ Gi en kort analyse (maks 3-4 setninger) som fokuserer på:
 
 Vær positiv og konstruktiv. Bruk spillerens faktiske resultater fra dataene.`;
       
-      // Replace {{json}} with actual data - exactly like UserInterface does it
-      const fullPrompt = promptToUse.replace('{{json}}', JSON.stringify(dataToAnalyze, null, 2));
+      // Replace {{json}} with actual data - use compact format to prevent truncation
+      const jsonString = JSON.stringify(dataToAnalyze); // Compact, no indentation
+      console.log('📦 Frontend JSON size:', jsonString.length, 'chars');
+      const fullPrompt = promptToUse.replace('{{json}}', jsonString);
       
       // Use the existing backend AI endpoint - matching working implementation from UserInterface
       // Increase timeout for O3 models which have longer reasoning time

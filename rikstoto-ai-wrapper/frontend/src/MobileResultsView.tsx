@@ -154,10 +154,9 @@ export default function MobileResultsView() {
         setRaceResults(newRaceResults);
       }
       
-      // Update AI race data with the DISPLAY data, not the full generated JSON
-      // This ensures AI analyzes what's shown in the UI
-      const newRaceData = generateRaceDataForAI(newBetResult, newRaceResults);
-      setRaceDataForAI(newRaceData);
+      // Send the FULL generated JSON to AI, not just simplified display data
+      // This gives AI access to all betting data, odds, percentages, etc.
+      setRaceDataForAI(data); // Use full JSON data instead of simplified version
       
     } catch (error) {
       console.error('Error processing generated JSON:', error);
