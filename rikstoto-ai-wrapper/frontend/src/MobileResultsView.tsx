@@ -178,7 +178,15 @@ export default function MobileResultsView() {
   const handleReset = () => {
     setBetResult(DEFAULT_BET_RESULT);
     setRaceResults(DEFAULT_RACE_RESULTS);
-    setRaceDataForAI(generateRaceDataForAI(DEFAULT_BET_RESULT, DEFAULT_RACE_RESULTS));
+    // Reset to simplified data when no full JSON available
+    setRaceDataForAI({
+      betResult: DEFAULT_BET_RESULT,
+      raceResults: DEFAULT_RACE_RESULTS,
+      totalStake: 198,
+      poolSize: 8900000,
+      numberOfPlayers: 45892,
+      timestamp: new Date().toISOString()
+    });
     setGeneratedJsonData(null);
     setTrackName("Klosterskogen");
     setRaceDateTime("lørdag 16:30");
@@ -220,8 +228,21 @@ export default function MobileResultsView() {
 
   // Initialize race data for AI on mount
   React.useEffect(() => {
-    setRaceDataForAI(generateRaceDataForAI(betResult, raceResults));
-  }, []);
+    // Use generatedJsonData if available (has full data), otherwise use simplified version
+    if (generatedJsonData) {
+      setRaceDataForAI(generatedJsonData);
+    } else {
+      // For initial load, create a more complete structure
+      setRaceDataForAI({
+        betResult: betResult,
+        raceResults: raceResults,
+        totalStake: 198,
+        poolSize: 8900000,
+        numberOfPlayers: 45892,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }, [generatedJsonData]); // Re-run when JSON is generated
 
   return (
     <>
