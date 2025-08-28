@@ -66,6 +66,11 @@ export default function RikstotoInnsiktCard({
         analysis: "Favorittene dominerte, men en outsider på løp 7 ødela for 7 rette."
       };
       
+      // Debug: Check what data we're actually sending
+      console.log('🔍 Data being sent to AI:', dataToAnalyze);
+      console.log('🔍 Has full race data?', dataToAnalyze.raceResults?.[0]?.results ? 'YES' : 'NO');
+      console.log('🔍 Has percentageBet?', JSON.stringify(dataToAnalyze).includes('percentageBet') ? 'YES' : 'NO');
+      
       // Use custom system prompt if provided, otherwise use default
       const promptToUse = systemPrompt || `Du er Rikstoto Innsikt, en ekspert på norsk travsport og hesteveddeløp. Du analyserer V75-resultater for spillere.
 
