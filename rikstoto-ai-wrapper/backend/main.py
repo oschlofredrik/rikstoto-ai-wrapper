@@ -123,7 +123,7 @@ MODEL_DEFAULTS = {
     "gpt-4o": {
         "system_prompt": """Du er Rikstoto Innsikt, en AI-basert analyseassistent spesialisert på norsk hesteveddeløp og totalisatorspill.
 
-**OPPGAVE**: Analyser følgende bongdata og gi en pedagogisk forklaring på norsk (200-350 ord):
+**OPPGAVE**: Analyser følgende Stalltips-resultat og gi en pedagogisk forklaring på norsk (200-350 ord). NB: Dette er Stalltips (ferdig kupong til 198 kr), IKKE systemspill:
 
 {{json}}
 
@@ -174,7 +174,7 @@ MODEL_DEFAULTS = {
    - totalCost = innsats
    - correctRaces = antall rette løp
    - odds = sannsynlighet uttrykt som utbetalingsrate
-   - systemPlay = systemspill (flere rekker)
+   - systemPlay = false for Stalltips (fast kupong), true for systemspill
    - bankers = hester som må vinne
 
 Husk: Du skal utdanne og informere, ikke oppfordre til mer spilling. Fokuser på faktabasert analyse og fremme ansvarlig spilleatferd.""",
@@ -185,7 +185,7 @@ Husk: Du skal utdanne og informere, ikke oppfordre til mer spilling. Fokuser på
     "gpt-4o-mini": {
         "system_prompt": """Du er Rikstoto Innsikt, en AI-basert analyseassistent spesialisert på norsk hesteveddeløp og totalisatorspill.
 
-**OPPGAVE**: Analyser følgende bongdata og gi en pedagogisk forklaring på norsk (200-350 ord):
+**OPPGAVE**: Analyser følgende Stalltips-resultat og gi en pedagogisk forklaring på norsk (200-350 ord). NB: Dette er Stalltips (ferdig kupong til 198 kr), IKKE systemspill:
 
 {{json}}
 
@@ -236,7 +236,7 @@ Husk: Du skal utdanne og informere, ikke oppfordre til mer spilling. Fokuser på
    - totalCost = innsats
    - correctRaces = antall rette løp
    - odds = sannsynlighet uttrykt som utbetalingsrate
-   - systemPlay = systemspill (flere rekker)
+   - systemPlay = false for Stalltips (fast kupong), true for systemspill
    - bankers = hester som må vinne
 
 Husk: Du skal utdanne og informere, ikke oppfordre til mer spilling. Fokuser på faktabasert analyse og fremme ansvarlig spilleatferd.""",
@@ -1340,12 +1340,20 @@ async def generate_test_json(request: JsonGeneratorRequest):
         }
     
     # Generate bet details
-    rows = request.rows or random.choice([48, 96, 192, 384, 768])
-    stake_amount = request.stake or rows * random.choice([0.5, 1, 2, 5])
+    # Stalltips is always fixed price (198 kr), not systemplay
+    if request.product == "Stalltips":
+        rows = 1  # Stalltips is one shared coupon
+        stake_amount = 198  # Fixed price
+        is_system = False
+    else:
+        rows = request.rows or random.choice([48, 96, 192, 384, 768])
+        stake_amount = request.stake or rows * random.choice([0.5, 1, 2, 5])
+        is_system = rows > 1  # System play if multiple rows
+    
     json_data["betDetails"] = {
         "betId": f"{request.product}-{race_date.strftime('%Y-%m%d')}-{track[:2].upper()}-{random.randint(100000, 999999)}",
         "betType": request.product,
-        "systemPlay": True,
+        "systemPlay": is_system,
         "rows": rows,
         "costPerRow": stake_amount / rows if rows > 0 else 1,
         "totalCost": stake_amount,
