@@ -1340,23 +1340,28 @@ async def generate_test_json(request: JsonGeneratorRequest):
         }
     
     # Generate bet details
-    # Stalltips is always fixed price (198 kr), not systemplay
-    if request.product == "Stalltips":
+    # For Rikstoto Innsikt, we're always analyzing Stalltips (fixed 198 kr)
+    # Even if product is V75/V64, treat it as Stalltips for this app
+    if request.product in ["V75", "V64", "V5", "Stalltips"]:
+        # Always generate as Stalltips for Rikstoto Innsikt analysis
         rows = 1  # Stalltips is one shared coupon
         stake_amount = 198  # Fixed price
         is_system = False
+        bet_type = "Stalltips"  # Always show as Stalltips
     else:
-        rows = request.rows or random.choice([48, 96, 192, 384, 768])
-        stake_amount = request.stake or rows * random.choice([0.5, 1, 2, 5])
-        is_system = rows > 1  # System play if multiple rows
+        # DD and other products can have different logic
+        rows = request.rows or 1
+        stake_amount = request.stake or 50
+        is_system = False
+        bet_type = request.product
     
     json_data["betDetails"] = {
         "betId": f"{request.product}-{race_date.strftime('%Y-%m%d')}-{track[:2].upper()}-{random.randint(100000, 999999)}",
-        "betType": request.product,
-        "systemPlay": is_system,
-        "rows": rows,
+        "betType": bet_type,  # Shows "Stalltips" for V75/V64/V5
+        "systemPlay": is_system,  # Always false for Stalltips
+        "rows": rows,  # Always 1 for Stalltips
         "costPerRow": stake_amount / rows if rows > 0 else 1,
-        "totalCost": stake_amount,
+        "totalCost": stake_amount,  # Always 198 kr for Stalltips
         "currency": "NOK",
         "timestamp": datetime.now().isoformat() + "Z"
     }
