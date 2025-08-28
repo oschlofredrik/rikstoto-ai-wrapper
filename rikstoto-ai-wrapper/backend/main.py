@@ -1343,19 +1343,27 @@ async def generate_test_json(request: JsonGeneratorRequest):
     # For Rikstoto Innsikt, we're always analyzing Stalltips (shared coupon)
     # Even if product is V75/V64, treat it as Stalltips for this app
     if request.product in ["V75", "V64", "V5", "Stalltips"]:
-        # Stalltips price reflects the underlying rows in the shared coupon
-        # Common Stalltips configurations:
-        # 98 kr = ~100 rows, 198 kr = ~200 rows, 298 kr = ~300 rows, etc.
+        # Stalltips has different price levels for different share sizes
+        # Lite spill: 98 kr, Standard: 196 kr, Stort: 294 kr, or custom amount
         if request.stake:
             stake_amount = request.stake
-            rows = stake_amount  # Approximate rows based on price
         else:
-            # Random realistic Stalltips configuration
-            rows = random.choice([98, 198, 298, 398, 498])
-            stake_amount = rows  # Price matches underlying rows
+            # Random realistic Stalltips price level
+            stake_amount = random.choice([98, 196, 294, 392, 490])
         
-        is_system = False  # Still not a personal systemspill
+        rows = 1  # Stalltips is always ONE shared coupon, not multiple rows
+        is_system = False  # Not a personal systemspill
         bet_type = "Stalltips"  # Always show as Stalltips
+        
+        # Add Stalltips share info
+        if stake_amount <= 98:
+            share_type = "Lite spill"
+        elif stake_amount <= 196:
+            share_type = "Standard spill"
+        elif stake_amount <= 294:
+            share_type = "Stort spill"
+        else:
+            share_type = f"Eget beløp ({stake_amount} kr)"
     else:
         # DD and other products can have different logic
         rows = request.rows or 1
@@ -1367,12 +1375,16 @@ async def generate_test_json(request: JsonGeneratorRequest):
         "betId": f"{request.product}-{race_date.strftime('%Y-%m%d')}-{track[:2].upper()}-{random.randint(100000, 999999)}",
         "betType": bet_type,  # Shows "Stalltips" for V75/V64/V5
         "systemPlay": is_system,  # Always false for Stalltips
-        "rows": rows,  # Always 1 for Stalltips
-        "costPerRow": stake_amount / rows if rows > 0 else 1,
-        "totalCost": stake_amount,  # Stalltips price (98, 198, 298, etc.)
+        "rows": rows,  # Always 1 for Stalltips (one shared coupon)
+        "costPerRow": stake_amount,
+        "totalCost": stake_amount,  # Stalltips price level
         "currency": "NOK",
         "timestamp": datetime.now().isoformat() + "Z"
     }
+    
+    # Add Stalltips-specific info if applicable
+    if request.product in ["V75", "V64", "V5", "Stalltips"] and 'share_type' in locals():
+        json_data["betDetails"]["shareType"] = share_type  # "Lite spill", "Standard spill", etc.
     
     # Generate pool info
     total_pool = request.pool_size or random.randint(500000, 15000000)
