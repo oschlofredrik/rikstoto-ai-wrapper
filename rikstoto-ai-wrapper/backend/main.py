@@ -837,7 +837,9 @@ async def generate_text(request: GenerationRequest) -> Dict[str, Any]:
                     json_obj = json.loads(json_to_use)
                 else:
                     json_obj = json_to_use
-                json_str = json.dumps(json_obj, indent=2)
+                # Use compact JSON to save tokens and avoid truncation
+                json_str = json.dumps(json_obj, separators=(',', ':'))  # Compact format
+                print(f"📦 JSON size: {len(json_str)} chars (compact format)")
                 prompt = prompt.replace("{{json}}", json_str)
                 prompt = prompt.replace("{json}", json_str)
             except json.JSONDecodeError:
@@ -888,11 +890,25 @@ async def generate_text(request: GenerationRequest) -> Dict[str, Any]:
         # Debug: Log what's being sent to verify full JSON is included
         print(f"\n🔍 DEBUG: Sending to {model_name}")
         print(f"📏 Prompt length: {len(prompt)} characters")
+        
+        # Check if prompt seems complete
+        if "{{json}}" in prompt:
+            print(f"⚠️ WARNING: JSON placeholder not replaced!")
+        
+        # Count races in the prompt to verify all data is there
+        race_count = prompt.count('"race":')
+        print(f"📊 Races found in prompt: {race_count}")
+        
+        # Check for key fields
         print(f"📊 JSON indicators in prompt:")
         print(f"  - Contains 'percentageBet': {'percentageBet' in prompt}")
         print(f"  - Contains 'amountBet': {'amountBet' in prompt}")
         print(f"  - Contains 'raceResults': {'raceResults' in prompt}")
         print(f"  - Contains 'betResult': {'betResult' in prompt}")
+        
+        # Log the last part to check for truncation
+        if len(prompt) > 200:
+            print(f"📄 Last 200 chars of prompt: ...{prompt[-200:]}")
         
         # Route to appropriate API based on model
         if model_name in ["gpt-4o", "gpt-4o-mini", "o3-mini"]:
@@ -1050,7 +1066,9 @@ async def generate_all(request: ParallelGenerationRequest) -> Dict[str, Any]:
     # Validate JSON
     try:
         json_obj = json.loads(request.json_data)
-        json_str = json.dumps(json_obj, indent=2)
+        # Use compact JSON format to save tokens
+        json_str = json.dumps(json_obj, separators=(',', ':'))
+        print(f"📦 Parallel generation JSON size: {len(json_str)} chars (compact)")
     except json.JSONDecodeError as e:
         raise HTTPException(status_code=400, detail=f"Invalid JSON: {str(e)}")
     
